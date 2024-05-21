@@ -9,17 +9,6 @@
         font-family: sans-serif;
     }
 
-    #consoleOutput {
-        border: solid 2px black;
-        padding: 6px 12px;
-        box-sizing: border-box;
-        position: absolute;
-        top: 1vh;
-        right: 1vh;
-        width: 400px;
-        height: 98vh;
-    }
-
     #differenceContainer {
         display: flex;
     }
@@ -32,43 +21,40 @@
 
 <h1 style="margin: 0; padding: 0;">3DS Wigglegram Maker from .MPO</h1>
 
-<div id="consoleOutput">CONSOLE:</div>
-
-Flip L/R:<input id="flipLR" type="checkbox" alt="Flip"><br>
 <input id="imageUpload" type="file" accept=".mpo" onchange='loadImg(event)'><br><br>
 
-<canvas id="canvas_left" width="640px" height="480px" style="border: solid 2px blue;"></canvas>
-<canvas id="canvas_right" width="640px" height="480px" style="border: solid 2px red;"></canvas>
-<br><br>
+<div style="display:none;">
+    <canvas id="canvas_left" width="640px" height="480px" style="border: solid 2px blue;"></canvas>
+    <canvas id="canvas_right" width="640px" height="480px" style="border: solid 2px red;"></canvas>
+</div>
 
-overlappedImage<br>
-<div id="adjustAmountLabel">0px</div>
-<input id="adjustOverlap" type="range" min="-320" max="320" style="width: 500px">
+<input id="adjustOverlap" type="range" min="-320" max="320" style="width: 500px"><span id="adjustAmountLabel">0px</span>
 <div id="differenceContainer">
     <canvas id="canvas_overlap" width="640px" height="480px" style="border: solid 2px red;"></canvas>
     <canvas id="canvas_bottom" width="640px" height="480px" style="border: solid 2px blue;"></canvas>
 </div>
 
-<br><button onclick="createFrames()">CREATE GIF FRAMES</button><br>
+<br><span>Frame length ms: </span><input id="frameSpeed" type="number" value="100" min="50" max="500" step="1">
 
-<br>canvas frames for gif:<br>
-1 <canvas id="canvas_frame1" width="960px" height="480px" style="border: solid 2px #ff5632; background: #e7e7e7;"></canvas><br>
-2 <canvas id="canvas_frame2" width="960px" height="480px" style="border: solid 2px #ffe432; background: #e7e7e7;"></canvas><br>
-3 <canvas id="canvas_frame3" width="960px" height="480px" style="border: solid 2px #30e353; background: #e7e7e7;"></canvas><br>
+<br><button onclick="createFrames()">CREATE GIF</button><br>
 
-GIF
+<div style="display:none;">
+    1 <canvas id="canvas_frame1" width="960px" height="480px" style="border: solid 2px #ff5632; background: #e7e7e7;"></canvas><br>
+    2 <canvas id="canvas_frame2" width="960px" height="480px" style="border: solid 2px #ffe432; background: #e7e7e7;"></canvas><br>
+    3 <canvas id="canvas_frame3" width="960px" height="480px" style="border: solid 2px #30e353; background: #e7e7e7;"></canvas><br>
+</div>
+
+<img id="finalGif">
 
 <script>
-    function consolePrint(message) {
-        document.getElementById('consoleOutput').innerText += "\n" + message.toString();
-    }
-
     /* https://github.com/k-hatano/stereo_viewer_js */
     var canvasWidth = 640;
     var canvasWideWidth = 960;
     var canvasHeight = 480;
 
+    let imageName = "";
     let overlayOffset = 0;
+    let frameSpeed = 100;
 
     var leftImage = new Image();
     var rightImage = new Image();
@@ -78,32 +64,20 @@ GIF
     };
 
     function loadImg(event) {
-        consolePrint("loadImg()");
         var file = event.target.files[0];
         var reader = new FileReader();
         reader.readAsBinaryString(file);
 
         reader.onload = function() {
-            consolePrint("image reader loaded.");
-            consolePrint("loaded mpo: " + file.name.toString());
+            imageName = file.name.toString().split('.')[0];
             let result = splitImageToLeftRight(reader.result);
-            consolePrint("LR flip?: " + document.getElementById('flipLR').checked.toString());
-            if(document.getElementById('flipLR').checked) {
-                leftImage.src = result[0];
-                rightImage.src = result[1];
-            }
-            else {
-                leftImage.src = result[1];
-                rightImage.src = result[0];
-            }
-            //leftImage.src = result[1];
-            //rightImage.src = result[0];
+            leftImage.src = result[1];
+            rightImage.src = result[0];
             drawCanvas();
         };
     }
 
     function drawCanvas() {
-        consolePrint("-> drawCanvas()");
         var canvasLeft = document.getElementById('canvas_left');
         var contextLeft = canvasLeft.getContext('2d');
         contextLeft.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -127,13 +101,10 @@ GIF
     }
 
     function splitImageToLeftRight(source) {
-        consolePrint("splitImageToLeftRight()");
         var indexPair = [];
         var depth = 0;
         var startIndex = 0;
 
-        console.log(source.length);
-        consolePrint("source.length: " + source.length.toString());
         for (var i = 0; i < source.length; i++) {
 
             if (source.charCodeAt(i) === 0xff && source.charCodeAt(i + 1) === 0xd8) {
@@ -168,10 +139,12 @@ GIF
         overlayOffset = document.getElementById('adjustOverlap').value;
     }, false);
 
+    document.getElementById('frameSpeed').addEventListener("input", function() {
+        frameSpeed = document.getElementById('frameSpeed').value;
+    }, false);
+
 
     function createFrames() {
-        consolePrint("createFrames");
-
         var frame1 = document.getElementById('canvas_frame1');
         var contextFrame1 = frame1.getContext('2d');
         contextFrame1.clearRect(0, 0, canvasWideWidth, canvasHeight);
@@ -190,13 +163,25 @@ GIF
         contextFrame3.drawImage(rightImage, 160 + parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
 
 
-
-        // create gif
+        // todo - create gif
         // frame 1
         // frame 2
         // frame 3
         // frame 4
-
+        var encoder = new GIFEncoder();
+        encoder.setRepeat(0);
+        encoder.setDelay(parseInt(frameSpeed)); //go to next frame every n milliseconds
+        encoder.start();
+        encoder.addFrame(contextFrame1);
+        encoder.addFrame(contextFrame2);
+        encoder.addFrame(contextFrame3);
+        encoder.addFrame(contextFrame2);
+        encoder.finish();
+        // download
+        //encoder.download(imageName + "_wigglegram_" + frameSpeed.toString() + "ms.gif");
+        var binary_gif = encoder.stream().getData() //notice this is different from the as3gif package!
+        var data_url = 'data:image/gif;base64,'+encode64(binary_gif);
+        document.getElementById('finalGif').src = data_url;
 
         // if overlaying image is right of under:
         // CROP RESOLUTION: [ 160 + overlayOffset, 160 + canvasWidth ]
@@ -205,5 +190,11 @@ GIF
 
     }
 </script>
+
+<script type="text/javascript" src="LZWEncoder.js"></script>
+<script type="text/javascript" src="NeuQuant.js"></script>
+<script type="text/javascript" src="GIFEncoder.js"></script>
+<script type="text/javascript" src="b64.js"></script>
+
 </body>
 </html>
