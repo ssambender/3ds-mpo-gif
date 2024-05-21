@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>3DS Wigglegram</title>
+</head>
+<style>
+    body {
+        font-family: sans-serif;
+    }
+
+    #consoleOutput {
+        border: solid 2px black;
+        padding: 6px 12px;
+        box-sizing: border-box;
+        position: absolute;
+        top: 1vh;
+        right: 1vh;
+        width: 400px;
+        height: 98vh;
+    }
+
+    #differenceContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #canvas_overlap {
+        position: absolute;
+        mix-blend-mode: difference;
+    }
+</style>
+<body>
+
+<h1 style="margin: 0; padding: 0;">3DS Wigglegram Maker from .MPO</h1>
+
+<div id="consoleOutput">CONSOLE:</div>
+
+Flip L/R:<input id="flipLR" type="checkbox" alt="Flip"><br>
+<input id="imageUpload" type="file" accept=".mpo" onchange='loadImg(event)'><br><br>
+
+<canvas id="canvas_left" width="640px" height="480px" style="border: solid 2px blue;"></canvas>
+<canvas id="canvas_right" width="640px" height="480px" style="border: solid 2px red;"></canvas>
+<br><br>
+
+overlappedImage<br>
+<div id="adjustAmountLabel">0px</div>
+<input id="adjustOverlap" type="range" min="-320" max="320" style="width: 500px">
+<div id="differenceContainer">
+    <canvas id="canvas_overlap" width="640px" height="480px" style="border: solid 2px red;"></canvas>
+    <canvas id="canvas_bottom" width="640px" height="480px" style="border: solid 2px blue;"></canvas>
+</div>
+
+<script>
+    function consolePrint(message) {
+        document.getElementById('consoleOutput').innerText += "\n" + message.toString();
+    }
+
+    /* https://github.com/k-hatano/stereo_viewer_js */
+    var canvasWidth = 640;
+    var canvasHeight = 480;
+
+    var leftImage = new Image();
+    var rightImage = new Image();
+
+    onload = function() {
+        drawCanvas();
+    };
+
+    function loadImg(event) {
+        consolePrint("loadImg()");
+        var file = event.target.files[0];
+        var reader = new FileReader();
+        reader.readAsBinaryString(file);
+
+        reader.onload = function() {
+            consolePrint("image reader loaded.");
+            consolePrint("loaded mpo: " + file.name.toString());
+            let result = splitImageToLeftRight(reader.result);
+            consolePrint("LR flip?: " + document.getElementById('flipLR').checked.toString());
+            if(document.getElementById('flipLR').checked) {
+                leftImage.src = result[0];
+                rightImage.src = result[1];
+            }
+            else {
+                leftImage.src = result[1];
+                rightImage.src = result[0];
+            }
+            //leftImage.src = result[1];
+            //rightImage.src = result[0];
+            drawCanvas();
+        };
+    }
+
+    function drawCanvas() {
+        consolePrint("-> drawCanvas()");
+        var canvasLeft = document.getElementById('canvas_left');
+        var contextLeft = canvasLeft.getContext('2d');
+        contextLeft.clearRect(0, 0, canvasWidth, canvasHeight);
+        contextLeft.drawImage(leftImage, 0, 0, canvasWidth, canvasHeight);
+
+        var canvasRight = document.getElementById('canvas_right');
+        var contextRight = canvasRight.getContext('2d');
+        contextRight.clearRect(0, 0, canvasWidth, canvasHeight);
+        contextRight.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight);
+
+
+        var canvasBottom = document.getElementById('canvas_bottom');
+        var contextBottom = canvasBottom.getContext('2d');
+        contextBottom.clearRect(0, 0, canvasWidth, canvasHeight);
+        contextBottom.drawImage(leftImage, 0, 0, canvasWidth, canvasHeight);
+
+        var canvasOverlap = document.getElementById('canvas_overlap');
+        var contextOverlap = canvasOverlap.getContext('2d');
+        contextOverlap.clearRect(0, 0, canvasWidth, canvasHeight);
+        contextOverlap.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight);
+    }
+
+    function splitImageToLeftRight(source) {
+        consolePrint("splitImageToLeftRight()");
+        var indexPair = [];
+        var depth = 0;
+        var startIndex = 0;
+
+        console.log(source.length);
+        consolePrint("source.length: " + source.length.toString());
+        for (var i = 0; i < source.length; i++) {
+
+            if (source.charCodeAt(i) === 0xff && source.charCodeAt(i + 1) === 0xd8) {
+                if (depth === 0) {
+                    startIndex = i;
+                }
+                depth++;
+                i++;
+            }
+            if (source.charCodeAt(i) === 0xff && source.charCodeAt(i + 1) === 0xd9) {
+                depth--;
+                if (depth === 0) {
+                    indexPair.push({start:startIndex, end:i + 2});
+                }
+                i++;
+            }
+        }
+
+        var result = [];
+        for (var j = 0; j < indexPair.length; j++) {
+            var image = source.substring(indexPair[j].start, indexPair[j].end);
+            var imageUrl = 'data:image/jpeg;base64,' + btoa(image);
+
+            result.push(imageUrl);
+        }
+        return result;
+    }
+
+    document.getElementById('adjustOverlap').addEventListener("input", function() {
+        document.getElementById("canvas_overlap").style.marginLeft = document.getElementById('adjustOverlap').value.toString() + "px";
+        document.getElementById('adjustAmountLabel').innerText = document.getElementById('adjustOverlap').value.toString() + "px";
+    }, false);
+</script>
+</body>
+</html>
