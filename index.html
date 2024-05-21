@@ -38,10 +38,13 @@
 
 <br><button onclick="createFrames()">CREATE GIF</button><br>
 
-<div style="display:none;">
-    1 <canvas id="canvas_frame1" width="960px" height="480px" style="border: solid 2px #ff5632; background: #e7e7e7;"></canvas><br>
-    2 <canvas id="canvas_frame2" width="960px" height="480px" style="border: solid 2px #ffe432; background: #e7e7e7;"></canvas><br>
-    3 <canvas id="canvas_frame3" width="960px" height="480px" style="border: solid 2px #30e353; background: #e7e7e7;"></canvas><br>
+<div>
+    <canvas id="canvas_frame1" width="960px" height="480px" style="border: solid 2px #ff5632; background: #e7e7e7;"></canvas>
+    <canvas id="canvas_cropped1" width="960px" height="480px" style="border: solid 2px black; background: dodgerblue;"></canvas><br>
+    <canvas id="canvas_frame2" width="960px" height="480px" style="border: solid 2px #ffe432; background: #e7e7e7;"></canvas>
+    <canvas id="canvas_cropped2" width="960px" height="480px" style="border: solid 2px black; background: dodgerblue;"></canvas><br>
+    <canvas id="canvas_frame3" width="960px" height="480px" style="border: solid 2px #30e353; background: #e7e7e7;"></canvas>
+    <canvas id="canvas_cropped3" width="960px" height="480px" style="border: solid 2px black; background: dodgerblue;"></canvas><br>
 </div>
 
 <img id="finalGif">
@@ -162,31 +165,53 @@
         contextFrame3.clearRect(0, 0, canvasWideWidth, canvasHeight);
         contextFrame3.drawImage(rightImage, 160 + parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
 
+        // cropped
+        var frame_crop1 = document.getElementById('canvas_cropped1');
+        var frame_crop2 = document.getElementById('canvas_cropped2');
+        var frame_crop3 = document.getElementById('canvas_cropped3');
+        let crop_width = canvasWidth;
+        if(overlayOffset > 0){
+            crop_width = (160 + canvasWidth) - (160 + parseInt(overlayOffset));
+        }
+        else {
+            crop_width = (160 + canvasWidth + parseInt(overlayOffset)) - 160;
+        }
+        frame_crop1.width = crop_width;
+        frame_crop2.width = crop_width;
+        frame_crop3.width = crop_width;
 
-        // todo - create gif
-        // frame 1
-        // frame 2
-        // frame 3
-        // frame 4
+        var ctx_crop1 = frame_crop1.getContext('2d');
+        ctx_crop1.clearRect(0, 0, crop_width, canvasHeight);  //parseInt(overlayOffset)
+        ctx_crop1.drawImage(leftImage, 0 - parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
+
+        var ctx_crop2 = frame_crop2.getContext('2d');
+        ctx_crop2.clearRect(0, 0, crop_width, canvasHeight);
+        ctx_crop2.drawImage(leftImage, 0 - parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
+        ctx_crop2.globalAlpha = 0.5;
+        ctx_crop2.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight);
+
+        var ctx_crop3 = frame_crop3.getContext('2d');
+        ctx_crop3.clearRect(0, 0, crop_width, canvasHeight);
+        ctx_crop3.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight);
+
+        // create gif from canvas 2d contexts
         var encoder = new GIFEncoder();
         encoder.setRepeat(0);
         encoder.setDelay(parseInt(frameSpeed)); //go to next frame every n milliseconds
         encoder.start();
-        encoder.addFrame(contextFrame1);
-        encoder.addFrame(contextFrame2);
-        encoder.addFrame(contextFrame3);
-        encoder.addFrame(contextFrame2);
+        encoder.addFrame(ctx_crop1);
+        encoder.addFrame(ctx_crop2);
+        encoder.addFrame(ctx_crop3);
+        encoder.addFrame(ctx_crop2);
         encoder.finish();
-        // download
+
+        // download GIF
         //encoder.download(imageName + "_wigglegram_" + frameSpeed.toString() + "ms.gif");
+
+        // view GIF
         var binary_gif = encoder.stream().getData() //notice this is different from the as3gif package!
         var data_url = 'data:image/gif;base64,'+encode64(binary_gif);
         document.getElementById('finalGif').src = data_url;
-
-        // if overlaying image is right of under:
-        // CROP RESOLUTION: [ 160 + overlayOffset, 160 + canvasWidth ]
-        // else: (overlaying image is to the left)
-        // CROP RESOLUTION: [ 160, 160 + canvasWidth + overlayOffset ]
 
     }
 </script>
