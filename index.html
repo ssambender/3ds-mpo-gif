@@ -3,57 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <title>3DS Wigglegram</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="icon.png">
 </head>
-<style>
-    body {
-        font-family: sans-serif;
-    }
-
-    #differenceContainer {
-        display: flex;
-    }
-    #canvas_overlap {
-        position: absolute;
-        mix-blend-mode: difference;
-    }
-</style>
 <body>
 
-<!-- TITLE -->
-<h1 style="margin: 0; padding: 0;">3DS Wigglegram Maker from .MPO</h1>
+<div id="stripe-container">
+    <div id="stripe-pattern"></div>
+</div>
 
 <!-- IMAGE UPLOAD BUTTON -->
-<input id="imageUpload" type="file" accept=".mpo" onchange='loadImg(event)'><br><br>
+<div id="initialModal">
+    <div id="mainPopup">
+        <div id="mainText">
+            3DS Wigglegram Maker from .MPO<br>
 
-<!-- HIDE (split image) -->
+            <div id="subText">
+                Upload an <b>.mpo</b> image taken from a 3DS (or other stereoscopic device) and magically receive a wigglegram GIF!
+            </div>
+        </div>
+        <div id="buttonsContainer">
+            <button id="upload-mpo-btn" type="button" class="modal-action" onclick="triggerFileUpload()">
+                <div class="modal-action-pattern"></div>
+                <div class="modal-action-fade"></div>
+                <span class="modal-action-text inter-font" style="text-transform: uppercase;">Upload .MPO File</span>
+            </button>
+
+            <div id="buttonsRow2">
+                <button type="button" class="modal-action" onclick="window.open('https://github.com/ssambender/3ds-mpo-gif');">
+                    <div class="modal-action-pattern"></div>
+                    <div class="modal-action-fade"></div>
+                    <span class="modal-action-text inter-font">View GitHub</span>
+                </button>
+
+                <button type="button" class="modal-action">
+                    <div class="modal-action-pattern"></div>
+                    <div class="modal-action-fade"></div>
+                    <span class="modal-action-text inter-font">Learn More</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<input id="imageUpload" type="file" accept=".mpo" onchange='loadImg(event)' style="display: none;">
+
+<!-- SPLIT L/R IMAGES (HIDDEN) -->
 <div style="display:none;">
     <canvas id="canvas_left" width="640px" height="480px" style="border: solid 2px blue;"></canvas>
     <canvas id="canvas_right" width="640px" height="480px" style="border: solid 2px red;"></canvas>
 </div>
 
 <!-- ADJUSTMENT SLIDER -->
-<input id="adjustOverlap" type="range" min="-320" max="320" style="width: 500px"><span id="adjustAmountLabel">0px</span>
-<!-- VISUAL DIFFERENCE -->
+<div id="differenceLabel">
+    Adjust the slider below so that subject/pivot point is the most black it can be.
+</div>
+<div id="differenceControl">
+    <input id="adjustOverlap" type="range" min="-320" max="320" style="width: 500px"><span id="adjustAmountLabel">0px</span>
+</div>
+<!-- ADJUSTMENT OVERLAY IMAGES -->
 <div id="differenceContainer">
     <canvas id="canvas_overlap" width="640px" height="480px"></canvas>
     <canvas id="canvas_bottom" width="640px" height="480px"></canvas>
 </div>
+<!-- FRAME LENGTH -->
+<div id="frameLengthContainer">
+    <span style="margin-right: 4px">Frame length ms:</span>
+    <input id="frameSpeed" type="number" value="100" min="50" max="250" step="10">
+</div>
 
-<br><span>Frame length ms: </span><input id="frameSpeed" type="number" value="100" min="50" max="500" step="1">
+<!-- CREATE GIF BUTTON -->
+<div id="createGifContainer" style="background-color: rgba(0,0,0,0.85); padding: 20px 0; display: none; justify-content: center;">
+    <button type="button" class="modal-action" onclick="viewGif()">
+        <div class="modal-action-pattern"></div>
+        <div class="modal-action-fade"></div>
+        <span class="modal-action-text inter-font">VIEW GIF</span>
+    </button>
 
-<br><button onclick="createFrames()">CREATE GIF</button><br>
+    <button type="button" class="modal-action" onclick="downloadGif()">
+        <div class="modal-action-pattern"></div>
+        <div class="modal-action-fade"></div>
+        <span class="modal-action-text inter-font">DOWNLOAD GIF</span>
+    </button>
+</div>
 
+<!-- CROPPED FRAMES (HIDDEN) -->
 <div style="display: none">
     <canvas id="canvas_cropped1" width="960px" height="480px" style="border: solid 2px black;"></canvas><br>
     <canvas id="canvas_cropped2" width="960px" height="480px" style="border: solid 2px black;"></canvas><br>
     <canvas id="canvas_cropped3" width="960px" height="480px" style="border: solid 2px black;"></canvas><br>
 </div>
 
-<img id="finalGif">
+<!-- FINAL GIF -->
+<div id="viewGIF">
+    <img id="finalGif">
+</div>
 
-<br><button id="downloadGif" onclick="downloadGif()">DOWNLOAD GIF</button>
+
+</div>
 
 <script>
+
+    // TODO - fix custom cursor after file upload
+
+    // TODO - add "Learn More" screen
+
+    // TODO - make end screen look nicer & add "another file" button
+
+    function triggerFileUpload() {
+        document.getElementById('imageUpload').click();
+    }
+
     /* https://github.com/k-hatano/stereo_viewer_js */
     var canvasWidth = 640;
     var canvasHeight = 480;
@@ -77,9 +136,23 @@
         reader.onload = function() {
             imageName = file.name.toString().split('.')[0];
             let result = splitImageToLeftRight(reader.result);
+
+            //wait for the result before setting the src (below)
+
             leftImage.src = result[1];
             rightImage.src = result[0];
-            drawCanvas();
+
+            setTimeout(function(){
+                drawCanvas();
+
+                document.getElementById('differenceControl').style.display = 'flex';
+                document.getElementById('differenceContainer').style.display = 'flex';
+                document.getElementById('frameLengthContainer').style.display = 'flex';
+                document.getElementById('differenceLabel').style.display = 'flex';
+                document.getElementById('createGifContainer').style.display = 'flex';
+            }, 234);
+
+            document.getElementById('initialModal').style.display = 'none';
         };
     }
 
@@ -136,6 +209,7 @@
 
     document.getElementById('adjustOverlap').addEventListener("input", function() {
         document.getElementById("canvas_overlap").style.marginLeft = document.getElementById('adjustOverlap').value.toString() + "px";
+        document.getElementById("canvas_overlap").style.paddingLeft = document.getElementById('adjustOverlap').value.toString() + "px";
         document.getElementById('adjustAmountLabel').innerText = document.getElementById('adjustOverlap').value.toString() + "px";
         overlayOffset = document.getElementById('adjustOverlap').value;
     }, false);
@@ -161,6 +235,8 @@
         frame_crop2.width = crop_width;
         frame_crop3.width = crop_width;
 
+
+        // todo - fix below, when overlapping image goes over the edge to the left
         var ctx_crop1 = frame_crop1.getContext('2d');
         ctx_crop1.clearRect(0, 0, crop_width, canvasHeight);  //parseInt(overlayOffset)
         ctx_crop1.drawImage(leftImage, 0 - parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
@@ -196,7 +272,14 @@
         document.getElementById('finalGif').src = data_url;
     }
 
+    function viewGif() {
+        createFrames();
+        document.getElementById('viewGIF').style.display = 'flex';
+    }
+
     function downloadGif() {
+        createFrames();
+
         // Get the data URL of the final GIF image
         var gifSrc = document.getElementById('finalGif').src;
 
