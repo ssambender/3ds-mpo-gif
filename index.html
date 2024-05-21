@@ -22,8 +22,6 @@
 
     #differenceContainer {
         display: flex;
-        justify-content: center;
-        align-items: center;
     }
     #canvas_overlap {
         position: absolute;
@@ -51,6 +49,15 @@ overlappedImage<br>
     <canvas id="canvas_bottom" width="640px" height="480px" style="border: solid 2px blue;"></canvas>
 </div>
 
+<br><button onclick="createFrames()">CREATE GIF FRAMES</button><br>
+
+<br>canvas frames for gif:<br>
+1 <canvas id="canvas_frame1" width="960px" height="480px" style="border: solid 2px #ff5632; background: #e7e7e7;"></canvas><br>
+2 <canvas id="canvas_frame2" width="960px" height="480px" style="border: solid 2px #ffe432; background: #e7e7e7;"></canvas><br>
+3 <canvas id="canvas_frame3" width="960px" height="480px" style="border: solid 2px #30e353; background: #e7e7e7;"></canvas><br>
+
+GIF
+
 <script>
     function consolePrint(message) {
         document.getElementById('consoleOutput').innerText += "\n" + message.toString();
@@ -58,7 +65,10 @@ overlappedImage<br>
 
     /* https://github.com/k-hatano/stereo_viewer_js */
     var canvasWidth = 640;
+    var canvasWideWidth = 960;
     var canvasHeight = 480;
+
+    let overlayOffset = 0;
 
     var leftImage = new Image();
     var rightImage = new Image();
@@ -155,7 +165,45 @@ overlappedImage<br>
     document.getElementById('adjustOverlap').addEventListener("input", function() {
         document.getElementById("canvas_overlap").style.marginLeft = document.getElementById('adjustOverlap').value.toString() + "px";
         document.getElementById('adjustAmountLabel').innerText = document.getElementById('adjustOverlap').value.toString() + "px";
+        overlayOffset = document.getElementById('adjustOverlap').value;
     }, false);
+
+
+    function createFrames() {
+        consolePrint("createFrames");
+
+        var frame1 = document.getElementById('canvas_frame1');
+        var contextFrame1 = frame1.getContext('2d');
+        contextFrame1.clearRect(0, 0, canvasWideWidth, canvasHeight);
+        contextFrame1.drawImage(leftImage, 160, 0, canvasWidth, canvasHeight);
+
+        var frame2 = document.getElementById('canvas_frame2');
+        var contextFrame2 = frame2.getContext('2d');
+        contextFrame2.clearRect(0, 0, canvasWideWidth, canvasHeight);
+        contextFrame2.drawImage(leftImage, 160, 0, canvasWidth, canvasHeight);
+        contextFrame2.globalAlpha = 0.5;
+        contextFrame2.drawImage(rightImage, 160 + parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
+
+        var frame3 = document.getElementById('canvas_frame3');
+        var contextFrame3 = frame3.getContext('2d');
+        contextFrame3.clearRect(0, 0, canvasWideWidth, canvasHeight);
+        contextFrame3.drawImage(rightImage, 160 + parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
+
+
+
+        // create gif
+        // frame 1
+        // frame 2
+        // frame 3
+        // frame 4
+
+
+        // if overlaying image is right of under:
+        // CROP RESOLUTION: [ 160 + overlayOffset, 160 + canvasWidth ]
+        // else: (overlaying image is to the left)
+        // CROP RESOLUTION: [ 160, 160 + canvasWidth + overlayOffset ]
+
+    }
 </script>
 </body>
 </html>
