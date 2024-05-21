@@ -19,40 +19,43 @@
 </style>
 <body>
 
+<!-- TITLE -->
 <h1 style="margin: 0; padding: 0;">3DS Wigglegram Maker from .MPO</h1>
 
+<!-- IMAGE UPLOAD BUTTON -->
 <input id="imageUpload" type="file" accept=".mpo" onchange='loadImg(event)'><br><br>
 
+<!-- HIDE (split image) -->
 <div style="display:none;">
     <canvas id="canvas_left" width="640px" height="480px" style="border: solid 2px blue;"></canvas>
     <canvas id="canvas_right" width="640px" height="480px" style="border: solid 2px red;"></canvas>
 </div>
 
+<!-- ADJUSTMENT SLIDER -->
 <input id="adjustOverlap" type="range" min="-320" max="320" style="width: 500px"><span id="adjustAmountLabel">0px</span>
+<!-- VISUAL DIFFERENCE -->
 <div id="differenceContainer">
-    <canvas id="canvas_overlap" width="640px" height="480px" style="border: solid 2px red;"></canvas>
-    <canvas id="canvas_bottom" width="640px" height="480px" style="border: solid 2px blue;"></canvas>
+    <canvas id="canvas_overlap" width="640px" height="480px"></canvas>
+    <canvas id="canvas_bottom" width="640px" height="480px"></canvas>
 </div>
 
 <br><span>Frame length ms: </span><input id="frameSpeed" type="number" value="100" min="50" max="500" step="1">
 
 <br><button onclick="createFrames()">CREATE GIF</button><br>
 
-<div>
-    <canvas id="canvas_frame1" width="960px" height="480px" style="border: solid 2px #ff5632; background: #e7e7e7;"></canvas>
-    <canvas id="canvas_cropped1" width="960px" height="480px" style="border: solid 2px black; background: dodgerblue;"></canvas><br>
-    <canvas id="canvas_frame2" width="960px" height="480px" style="border: solid 2px #ffe432; background: #e7e7e7;"></canvas>
-    <canvas id="canvas_cropped2" width="960px" height="480px" style="border: solid 2px black; background: dodgerblue;"></canvas><br>
-    <canvas id="canvas_frame3" width="960px" height="480px" style="border: solid 2px #30e353; background: #e7e7e7;"></canvas>
-    <canvas id="canvas_cropped3" width="960px" height="480px" style="border: solid 2px black; background: dodgerblue;"></canvas><br>
+<div style="display: none">
+    <canvas id="canvas_cropped1" width="960px" height="480px" style="border: solid 2px black;"></canvas><br>
+    <canvas id="canvas_cropped2" width="960px" height="480px" style="border: solid 2px black;"></canvas><br>
+    <canvas id="canvas_cropped3" width="960px" height="480px" style="border: solid 2px black;"></canvas><br>
 </div>
 
 <img id="finalGif">
 
+<br><button id="downloadGif" onclick="downloadGif()">DOWNLOAD GIF</button>
+
 <script>
     /* https://github.com/k-hatano/stereo_viewer_js */
     var canvasWidth = 640;
-    var canvasWideWidth = 960;
     var canvasHeight = 480;
 
     let imageName = "";
@@ -83,23 +86,18 @@
     function drawCanvas() {
         var canvasLeft = document.getElementById('canvas_left');
         var contextLeft = canvasLeft.getContext('2d');
-        contextLeft.clearRect(0, 0, canvasWidth, canvasHeight);
         contextLeft.drawImage(leftImage, 0, 0, canvasWidth, canvasHeight);
 
         var canvasRight = document.getElementById('canvas_right');
         var contextRight = canvasRight.getContext('2d');
-        contextRight.clearRect(0, 0, canvasWidth, canvasHeight);
         contextRight.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight);
-
 
         var canvasBottom = document.getElementById('canvas_bottom');
         var contextBottom = canvasBottom.getContext('2d');
-        contextBottom.clearRect(0, 0, canvasWidth, canvasHeight);
         contextBottom.drawImage(leftImage, 0, 0, canvasWidth, canvasHeight);
 
         var canvasOverlap = document.getElementById('canvas_overlap');
         var contextOverlap = canvasOverlap.getContext('2d');
-        contextOverlap.clearRect(0, 0, canvasWidth, canvasHeight);
         contextOverlap.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight);
     }
 
@@ -148,23 +146,6 @@
 
 
     function createFrames() {
-        var frame1 = document.getElementById('canvas_frame1');
-        var contextFrame1 = frame1.getContext('2d');
-        contextFrame1.clearRect(0, 0, canvasWideWidth, canvasHeight);
-        contextFrame1.drawImage(leftImage, 160, 0, canvasWidth, canvasHeight);
-
-        var frame2 = document.getElementById('canvas_frame2');
-        var contextFrame2 = frame2.getContext('2d');
-        contextFrame2.clearRect(0, 0, canvasWideWidth, canvasHeight);
-        contextFrame2.drawImage(leftImage, 160, 0, canvasWidth, canvasHeight);
-        contextFrame2.globalAlpha = 0.5;
-        contextFrame2.drawImage(rightImage, 160 + parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
-
-        var frame3 = document.getElementById('canvas_frame3');
-        var contextFrame3 = frame3.getContext('2d');
-        contextFrame3.clearRect(0, 0, canvasWideWidth, canvasHeight);
-        contextFrame3.drawImage(rightImage, 160 + parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
-
         // cropped
         var frame_crop1 = document.getElementById('canvas_cropped1');
         var frame_crop2 = document.getElementById('canvas_cropped2');
@@ -186,6 +167,7 @@
 
         var ctx_crop2 = frame_crop2.getContext('2d');
         ctx_crop2.clearRect(0, 0, crop_width, canvasHeight);
+        ctx_crop2.globalAlpha = 1;
         ctx_crop2.drawImage(leftImage, 0 - parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
         ctx_crop2.globalAlpha = 0.5;
         ctx_crop2.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight);
@@ -212,7 +194,25 @@
         var binary_gif = encoder.stream().getData() //notice this is different from the as3gif package!
         var data_url = 'data:image/gif;base64,'+encode64(binary_gif);
         document.getElementById('finalGif').src = data_url;
+    }
 
+    function downloadGif() {
+        // Get the data URL of the final GIF image
+        var gifSrc = document.getElementById('finalGif').src;
+
+        // Create a temporary anchor element
+        var downloadLink = document.createElement('a');
+        downloadLink.href = gifSrc;
+        downloadLink.download = imageName + "_wigglegram_" + frameSpeed.toString() + ".gif";
+
+        // Append the anchor to the body (required for Firefox)
+        document.body.appendChild(downloadLink);
+
+        // Trigger the download by simulating a click
+        downloadLink.click();
+
+        // Remove the anchor from the body
+        document.body.removeChild(downloadLink);
     }
 </script>
 
