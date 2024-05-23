@@ -8,38 +8,105 @@
 </head>
 <body>
 
-<div id="stripe-container">
-    <div id="stripe-pattern"></div>
+<div id="backgroundTex"></div>
+<div id="vignette"></div>
+<div id="background2" style="display: none;">
+    <div id="backgroundYellow"></div>
+    <div id="backgroundStars"></div>
+</div>
+
+<div id="creditsBottom">
+    <a href="https://sambender.net" target="_blank">Sam Bender 2024</a>
+</div>
+
+<!-- INSTRUCTIONS MODAL -->
+<div id="instructionsModal">
+    <div class="mainPopup shadow">
+        <div class="mainText" style="margin-bottom: 20px">
+            Instructions:<br>
+        </div>
+        <div id="instructionsContainer">
+            <div class="instructStep">
+                <div class="mainInstruction">
+                    <img src="step1.png">
+                    <div class="explain">
+                        Take photos on 3DS as normal, or locate previously taken photos. Try to keep the camera as horizontal as possible for best results!
+                    </div>
+                </div>
+                <div style="padding-top: 6px; opacity: 65%;">
+                    Optional: Enable the camera level by pressing down on the D-PAD
+                </div>
+            </div>
+            <div class="instructDivider"></div>
+            <div class="instructStep">
+                <div class="mainInstruction">
+                    <img src="step2.png">
+                    <div class="explain">
+                        If not already on the SD card, save the photos to the SD card. Load the images onto your computer or phone either by SD card or FTP.
+                    </div>
+                </div>
+                <div style="padding-top: 6px; opacity: 65%;">
+                    (Photos can be found in the DCIM folder)
+                </div>
+            </div>
+            <div class="instructDivider"></div>
+            <div class="instructStep">
+                <div class="mainInstruction">
+                    <img src="step3.png">
+                    <div class="explain">
+                        On the website, open the .MPO file. Drag the adjustment slider until the focal point of your image is as black as it can be. Pick frame length ms.
+                    </div>
+                </div>
+            </div>
+            <div class="instructDivider"></div>
+            <div class="instructStep">
+                <div class="mainInstruction">
+                    <img src="step4.png">
+                    <div class="explain">
+                        View & Download your wigglegram as a GIF with the respective buttons. Frame length time can be changed here as well to your liking.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttonsContainer">
+            <button id="closeInstructionsBtn" type="button" class="modal-action" onclick="closeInstructions()">
+                <div class="modal-action-pattern"></div>
+                <div class="modal-action-fade"></div>
+                <span class="modal-action-text inter-font" style="text-transform: uppercase;">Got it!</span>
+            </button>
+        </div>
+    </div>
 </div>
 
 <!-- IMAGE UPLOAD BUTTON -->
 <div id="initialModal">
-    <div id="mainPopup">
-        <div id="mainText">
+    <div class="mainPopup shadow">
+        <div class="mainText">
             3DS Wigglegram Maker from .MPO<br>
 
-            <div id="subText">
+            <div class="subText">
                 Upload an <b>.mpo</b> image taken from a 3DS (or other stereoscopic device) and magically receive a wigglegram GIF!
             </div>
         </div>
-        <div id="buttonsContainer">
+        <div class="buttonsContainer">
             <button id="upload-mpo-btn" type="button" class="modal-action" onclick="triggerFileUpload()">
                 <div class="modal-action-pattern"></div>
                 <div class="modal-action-fade"></div>
                 <span class="modal-action-text inter-font" style="text-transform: uppercase;">Upload .MPO File</span>
             </button>
 
-            <div id="buttonsRow2">
+            <div class="buttonsRow2">
                 <button type="button" class="modal-action" onclick="window.open('https://github.com/ssambender/3ds-mpo-gif');">
                     <div class="modal-action-pattern"></div>
                     <div class="modal-action-fade"></div>
                     <span class="modal-action-text inter-font">View GitHub</span>
                 </button>
 
-                <button type="button" class="modal-action">
+                <button type="button" class="modal-action" onclick="openInstructions()">
                     <div class="modal-action-pattern"></div>
                     <div class="modal-action-fade"></div>
-                    <span class="modal-action-text inter-font">Learn More</span>
+                    <span class="modal-action-text inter-font">Instructions / Guide</span>
                 </button>
             </div>
         </div>
@@ -53,38 +120,53 @@
     <canvas id="canvas_right" width="640px" height="480px" style="border: solid 2px red;"></canvas>
 </div>
 
-<!-- ADJUSTMENT SLIDER -->
-<div id="differenceLabel">
-    Adjust the slider below so that subject/pivot point is the most black it can be.
-</div>
-<div id="differenceControl">
-    <input id="adjustOverlap" type="range" min="-320" max="320" style="width: 500px"><span id="adjustAmountLabel">0px</span>
-</div>
-<!-- ADJUSTMENT OVERLAY IMAGES -->
-<div id="differenceContainer">
-    <canvas id="canvas_overlap" width="640px" height="480px"></canvas>
-    <canvas id="canvas_bottom" width="640px" height="480px"></canvas>
-</div>
-<!-- FRAME LENGTH -->
-<div id="frameLengthContainer">
-    <span style="margin-right: 4px">Frame length ms:</span>
-    <input id="frameSpeed" type="number" value="100" min="50" max="250" step="10">
+
+<div id="secondScreenContainer">
+    <div id="secondScreenModal" class="shadow">
+        <!-- ADJUSTMENT SLIDER -->
+        <div id="differenceLabel">
+            Adjust the slider below so that main subject is the most black it can be.
+        </div>
+        <div id="differenceControl">
+            <input id="adjustOverlap" type="range" min="-320" max="320" style="width: 500px"><span id="adjustAmountLabel">0px</span>
+        </div>
+        <!-- ADJUSTMENT OVERLAY IMAGES -->
+        <div id="differenceContainer">
+            <canvas id="canvas_overlap" width="640px" height="480px"></canvas>
+            <canvas id="canvas_bottom" width="640px" height="480px"></canvas>
+        </div>
+        <!-- FRAME LENGTH -->
+        <div id="frameLengthContainer">
+            <span style="margin-right: 4px">Optional: Change frame length ms:</span>
+            <input id="frameSpeed" type="number" value="100" min="50" max="250" step="10">
+        </div>
+
+        <!-- CREATE GIF BUTTON -->
+        <div id="createGifContainer" style="padding: 20px 0; display: flex; justify-content: center;">
+            <button type="button" class="modal-action" onclick="viewGif()">
+                <div class="modal-action-pattern"></div>
+                <div class="modal-action-fade"></div>
+                <span class="modal-action-text inter-font">CREATE GIF</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="viewGifModal" class="shadow" style="display: none;">
+        <div id="viewGIF">
+            <img id="finalGif">
+        </div>
+
+        <button type="button" class="modal-action" onclick="downloadGif()">
+            <div class="modal-action-pattern"></div>
+            <div class="modal-action-fade"></div>
+            <span class="modal-action-text inter-font">DOWNLOAD GIF</span>
+        </button>
+
+
+        <a onclick="makeAnother();">MAKE ANOTHER!</a>
+    </div>
 </div>
 
-<!-- CREATE GIF BUTTON -->
-<div id="createGifContainer" style="background-color: rgba(0,0,0,0.85); padding: 20px 0; display: none; justify-content: center;">
-    <button type="button" class="modal-action" onclick="viewGif()">
-        <div class="modal-action-pattern"></div>
-        <div class="modal-action-fade"></div>
-        <span class="modal-action-text inter-font">VIEW GIF</span>
-    </button>
-
-    <button type="button" class="modal-action" onclick="downloadGif()">
-        <div class="modal-action-pattern"></div>
-        <div class="modal-action-fade"></div>
-        <span class="modal-action-text inter-font">DOWNLOAD GIF</span>
-    </button>
-</div>
 
 <!-- CROPPED FRAMES (HIDDEN) -->
 <div style="display: none">
@@ -94,12 +176,6 @@
 </div>
 
 <!-- FINAL GIF -->
-<div id="viewGIF">
-    <img id="finalGif">
-</div>
-
-
-</div>
 
 <script>
 
@@ -107,7 +183,9 @@
 
     // TODO - add "Learn More" screen
 
-    // TODO - make end screen look nicer & add "another file" button
+    // TODO - make end screen look nicer
+
+    window.onbeforeunload = null;  // prevent page reload confirmation
 
     function triggerFileUpload() {
         document.getElementById('imageUpload').click();
@@ -129,6 +207,7 @@
     };
 
     function loadImg(event) {
+        console.log("loadimg()");
         var file = event.target.files[0];
         var reader = new FileReader();
         reader.readAsBinaryString(file);
@@ -137,7 +216,7 @@
             imageName = file.name.toString().split('.')[0];
             let result = splitImageToLeftRight(reader.result);
 
-            //wait for the result before setting the src (below)
+            // todo - wait for the result before setting the src (below) instead of waiting a length/time
 
             leftImage.src = result[1];
             rightImage.src = result[0];
@@ -145,11 +224,15 @@
             setTimeout(function(){
                 drawCanvas();
 
-                document.getElementById('differenceControl').style.display = 'flex';
-                document.getElementById('differenceContainer').style.display = 'flex';
-                document.getElementById('frameLengthContainer').style.display = 'flex';
-                document.getElementById('differenceLabel').style.display = 'flex';
-                document.getElementById('createGifContainer').style.display = 'flex';
+                document.getElementById('secondScreenContainer').style.display = 'flex';
+                document.getElementById('background2').style.display = "flex";
+                //document.getElementById('differenceControl').style.display = 'flex';
+                //document.getElementById('differenceContainer').style.display = 'flex';
+                //document.getElementById('frameLengthContainer').style.display = 'flex';
+                //document.getElementById('differenceLabel').style.display = 'flex';
+                //document.getElementById('createGifContainer').style.display = 'flex';
+
+                window.onbeforeunload = function(e) {return 'Reload page? Progress will not be saved';};  // page reload confirmation
             }, 234);
 
             document.getElementById('initialModal').style.display = 'none';
@@ -220,11 +303,10 @@
 
 
     function createFrames() {
-        // cropped
         var frame_crop1 = document.getElementById('canvas_cropped1');
         var frame_crop2 = document.getElementById('canvas_cropped2');
         var frame_crop3 = document.getElementById('canvas_cropped3');
-        let crop_width = canvasWidth;
+        let crop_width;
         if(overlayOffset > 0){
             crop_width = (160 + canvasWidth) - (160 + parseInt(overlayOffset));
         }
@@ -236,7 +318,6 @@
         frame_crop3.width = crop_width;
 
 
-        // todo - fix below, when overlapping image goes over the edge to the left
         var ctx_crop1 = frame_crop1.getContext('2d');
         ctx_crop1.clearRect(0, 0, crop_width, canvasHeight);  //parseInt(overlayOffset)
         ctx_crop1.drawImage(leftImage, 0 - parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
@@ -252,10 +333,9 @@
         ctx_crop3.clearRect(0, 0, crop_width, canvasHeight);
         ctx_crop3.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight);
 
-        // create gif from canvas 2d contexts
         var encoder = new GIFEncoder();
         encoder.setRepeat(0);
-        encoder.setDelay(parseInt(frameSpeed)); //go to next frame every n milliseconds
+        encoder.setDelay(parseInt(frameSpeed));
         encoder.start();
         encoder.addFrame(ctx_crop1);
         encoder.addFrame(ctx_crop2);
@@ -263,11 +343,9 @@
         encoder.addFrame(ctx_crop2);
         encoder.finish();
 
-        // download GIF
         //encoder.download(imageName + "_wigglegram_" + frameSpeed.toString() + "ms.gif");
 
-        // view GIF
-        var binary_gif = encoder.stream().getData() //notice this is different from the as3gif package!
+        var binary_gif = encoder.stream().getData()
         var data_url = 'data:image/gif;base64,'+encode64(binary_gif);
         document.getElementById('finalGif').src = data_url;
     }
@@ -275,27 +353,35 @@
     function viewGif() {
         createFrames();
         document.getElementById('viewGIF').style.display = 'flex';
+        document.getElementById('viewGifModal').style.display = 'flex';
+        document.getElementById('secondScreenModal').style.display = 'none';
     }
 
     function downloadGif() {
         createFrames();
 
-        // Get the data URL of the final GIF image
         var gifSrc = document.getElementById('finalGif').src;
 
-        // Create a temporary anchor element
         var downloadLink = document.createElement('a');
         downloadLink.href = gifSrc;
         downloadLink.download = imageName + "_wigglegram_" + frameSpeed.toString() + ".gif";
-
-        // Append the anchor to the body (required for Firefox)
         document.body.appendChild(downloadLink);
-
-        // Trigger the download by simulating a click
         downloadLink.click();
-
-        // Remove the anchor from the body
         document.body.removeChild(downloadLink);
+    }
+
+    function makeAnother() {
+        window.onbeforeunload = null;  // prevent page reload confirmation
+        location.reload();
+    }
+
+    function openInstructions() {
+        document.getElementById('instructionsModal').style.display = 'flex';
+        document.getElementById('initialModal').style.display = 'none';
+    }
+    function closeInstructions() {
+        document.getElementById('instructionsModal').style.display = 'none';
+        document.getElementById('initialModal').style.display = 'flex';
     }
 </script>
 

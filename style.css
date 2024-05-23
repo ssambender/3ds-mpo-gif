@@ -15,7 +15,7 @@ html {
     overflow: hidden;
 }
 
-body, button, html, input[type=file], input[type=file]::-webkit-file-upload-button {
+body, button, html, input[type=file], input[type=file]::-webkit-file-upload-button, #adjustAmountLabel, #frameSpeed {
     cursor: url('hand-cursor.png') 8 2, auto !important;
 }
 
@@ -23,13 +23,147 @@ body {
     font-family: Wii, sans-serif;
     background-color: #e6e6e6;
     margin: 0;
+    width: 100vw;
+    height: 100vh;
 }
 
-#differenceLabel {
+.shadow {
+    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 10px;
+}
+
+#vignette {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    z-index: -1;
+    box-shadow: inset 0 0 50px 0 rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+}
+
+#backgroundTex {
+    position: absolute;
+    z-index: -3;
+    width: 100vw;
+    height: 100vh;
+    background-image: url("stripeTexture.png");
+    background-size: 1vw;
+    opacity: 5%;
+    animation: bgTexMove 1.5s infinite linear;
+}
+@keyframes bgTexMove {
+    0% {
+        background-position-x: 0;
+    }
+    100% {
+        background-position-x: 1vw;
+    }
+}
+
+#backgroundYellow {
+    position: absolute;
+    z-index: -3;
+    width: 100vw;
+    height: 100vh;
+    background: #e6e6e6;
+}
+#backgroundStars {
+    position: absolute;
+    z-index: -2;
+    width: 100vw;
+    height: 100vh;
+    background-image: url("starTexture.svg");
+    background-size: 10vw;
+    opacity: 5%;
+    filter: invert();
+    animation: bgStarMove 15s infinite linear;
+}
+@keyframes bgStarMove {
+    0% {
+        background-position-x: 0;
+    }
+    100% {
+        background-position-x: 10vw;
+    }
+}
+
+#creditsBottom {
+    position: absolute;
+    bottom: 20px;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    z-index: 5;
+    color: black;
+    text-decoration: underline;
+}
+#creditsBottom a {
+    color: inherit;
+    cursor: inherit;
+}
+#creditsBottom a:hover {
+    color: #0075ff;
+}
+
+
+#instructionsModal {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    z-index: 3;
     display: none;
     justify-content: center;
-    margin: 64px 0 32px 0;
+    align-items: center;
+}
+#instructionsContainer {
+    margin-bottom: 40px;
+    width: 500px;
+}
+.instructStep {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.instructStep:first-child {
+    border-top: none;
+}
+.instructDivider {
+    width: 100%;
+    height: 3px;
+    background-color: white;
+    margin: 16px 0;
+    border-radius: 20px;
+}
+.mainInstruction {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    height: 120px;
+    overflow: hidden;
+}
+.instructStep img {
+    width: 30%;
+    border-radius: 10px;
+    object-fit: fill;
+}
+.explain {
+    width: 65%;
+    text-align: left;
+    display: flex;
+    align-items: center;  /* maybe remove?????????????????????????????????????????????????????????? */
+    font-size: 1.25rem;
+    overflow: hidden;
+}
+
+
+#differenceLabel {
+    display: flex;
+    justify-content: center;
+    margin: 0;
     font-size: 1.5em;
+    padding: 32px 0 26px 0;
     /*
     background-color: rgba(0, 0, 0, 0.85);
     color: #f0f0f0;
@@ -37,11 +171,11 @@ body {
      */
 }
 #differenceControl {
-    display: none;
+    display: flex;
     justify-content: center;
 }
 #differenceContainer {
-    display: none;
+    display: flex;
     justify-content: center;
     margin: 8px 0 12px 0;
 }
@@ -52,8 +186,7 @@ body {
 
 
 #frameLengthContainer {
-    width: 100vw;
-    display: none;
+    display: flex;
     justify-content: center;
     font-size: 1.15rem;
 }
@@ -61,47 +194,6 @@ body {
     font-family: Wii, sans-serif;
     border: solid 2px black;
     border-radius: 5px;
-}
-
-
-
-#stripe-container {
-    position: absolute;
-    z-index: -1;
-    left: 50%;
-    bottom: 0px;
-    translate: -50% 0%;
-    height: 100vh;
-    width: 100%;
-    min-width: 2000px;
-    background-color: #e6e6e6;
-}
-
-#stripe-pattern {
-    height: 100%;
-    width: 100%;
-    background-size: 18px 18px;
-    background-image: linear-gradient(
-            -45deg,
-            #e6e6e6 25%,
-            #f0f0f0 25%,
-            #f0f0f0 50%,
-            #e6e6e6 50%,
-            #e6e6e6 75%,
-            #f0f0f0 75%,
-            #f0f0f0 100%
-    );
-    box-shadow: inset 0rem 0.5rem 2rem 0.25rem rgb(0 0 0 / 40%);
-    animation: pan 360s linear infinite;
-}
-
-@keyframes pan {
-    0% {
-        background-position: 0% 0%;
-    }
-    100% {
-        background-position: 100% 0%;
-    }
 }
 
 
@@ -125,7 +217,7 @@ body {
     width: 100%;
     margin-bottom: 36px;
 }
-#buttonsRow2 .modal-action:first-child {
+.buttonsRow2 .modal-action:first-child {
     margin-right: 36px;
 }
 
@@ -206,7 +298,7 @@ body {
     position: absolute;
 }
 
-#mainPopup {
+.mainPopup {
     background-color: rgba(0, 0, 0, 0.85);
     padding: 30px 30px;
     border-radius: 25px;
@@ -217,12 +309,12 @@ body {
     color: #f0f0f0;
 }
 
-#mainText {
+.mainText {
     margin-bottom: 140px;
     font-size: 2rem
 }
 
-#subText {
+.subText {
     font-size: 1rem;
     width: 60%;
     margin-left: 20%;
@@ -230,30 +322,88 @@ body {
     color: #e6e6e6;
 }
 
-#buttonsRow2 {
+.buttonsRow2 {
     display: flex;
     justify-content: space-between;
 }
 
 
+#adjustAmountLabel {
+    min-width: 55px;
+    display: flex;
+    justify-content: center;
+}
+
 #createGifContainer {
     margin-top: 12px;
 }
+#createGifContainer button {
+    margin-left: 36px;
+}
 #createGifContainer button:first-child {
-    margin-right: 36px;
+    margin-left: 0;
+}
+#makeAnotherBtn {
+    display: none;
 }
 
 
 #viewGIF {
-    width: 100vw;
     display: none;
     justify-content: center;
     align-items: center;
-    margin-top: 12px;
 }
 #viewGIF img {
     transform: scale(0.8);
-    border: solid 3px black;
+    border: solid 3px #ffffff;
     box-sizing: border-box;
     border-radius: 20px;
+}
+
+
+
+
+#secondScreenContainer {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#secondScreenModal {
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.85);
+    border-radius: 25px;
+    color: #f0f0f0;
+    padding: 0 160px 24px 160px;
+    overflow: hidden;
+    position: relative;
+}
+
+
+
+#viewGifModal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    background-color: rgb(243, 65, 50);
+    border-radius: 25px;
+    z-index: 4;
+    color: #f0f0f0;
+}
+#viewGifModal button {
+    margin: 0 24px 24px 24px
+}
+#viewGifModal a {
+    margin-bottom: 24px;
+    text-decoration: underline;
+}
+#viewGifModal a:hover {
+    color: black;
 }
