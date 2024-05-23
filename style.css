@@ -16,7 +16,11 @@ html {
 }
 
 body, button, html, input[type=file], input[type=file]::-webkit-file-upload-button, #adjustAmountLabel, #frameSpeed {
-    cursor: url('hand-cursor.png') 8 2, auto !important;
+    /* cursor: url('hand-cursor.png') 8 2, auto !important; */
+    cursor: none;
+}
+::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+    cursor: none;
 }
 
 body {
@@ -25,6 +29,13 @@ body {
     margin: 0;
     width: 100vw;
     height: 100vh;
+}
+
+#customMouse {
+    position: absolute;
+    z-index: 9999;
+    pointer-events: none;
+    user-select: none;
 }
 
 .shadow {
@@ -40,6 +51,22 @@ body {
     box-sizing: border-box;
 }
 
+#loading {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    user-select: none;
+}
+#loading img {
+    transform: scale(2);
+    image-rendering: pixelated;
+}
+
 #backgroundTex {
     position: absolute;
     z-index: -3;
@@ -47,7 +74,6 @@ body {
     height: 100vh;
     background-image: url("stripeTexture.png");
     background-size: 1vw;
-    opacity: 5%;
     animation: bgTexMove 1.5s infinite linear;
 }
 @keyframes bgTexMove {
@@ -147,6 +173,8 @@ body {
     width: 30%;
     border-radius: 10px;
     object-fit: fill;
+    user-select: none;
+    pointer-events: none;
 }
 .explain {
     width: 65%;
@@ -299,7 +327,7 @@ body {
 }
 
 .mainPopup {
-    background-color: rgba(0, 0, 0, 0.85);
+    background-color: #222222;
     padding: 30px 30px;
     border-radius: 25px;
     display: flex;
@@ -352,12 +380,15 @@ body {
     display: none;
     justify-content: center;
     align-items: center;
+    user-select: none;
 }
 #viewGIF img {
     transform: scale(0.8);
     border: solid 3px #ffffff;
     box-sizing: border-box;
     border-radius: 20px;
+    user-select: none;
+    pointer-events: none;
 }
 
 
@@ -376,7 +407,7 @@ body {
 #secondScreenModal {
     display: flex;
     flex-direction: column;
-    background-color: rgba(0, 0, 0, 0.85);
+    background-color: #222222;
     border-radius: 25px;
     color: #f0f0f0;
     padding: 0 160px 24px 160px;
@@ -396,6 +427,12 @@ body {
     border-radius: 25px;
     z-index: 4;
     color: #f0f0f0;
+
+
+
+    background-image: url("stripeTexture.png");
+    background-size: 1vw;
+    animation: bgTexMove 1.5s infinite linear;
 }
 #viewGifModal button {
     margin: 0 24px 24px 24px

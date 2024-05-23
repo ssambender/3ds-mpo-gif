@@ -8,6 +8,7 @@
 </head>
 <body>
 
+<div id="loading"><img src="loading.gif"></div>
 <div id="backgroundTex"></div>
 <div id="vignette"></div>
 <div id="background2" style="display: none;">
@@ -175,15 +176,32 @@
     <canvas id="canvas_cropped3" width="960px" height="480px" style="border: solid 2px black;"></canvas><br>
 </div>
 
-<!-- FINAL GIF -->
+<div id="customMouse"><img src="hand-cursor.png"></div>
 
 <script>
 
+    const customMouse = document.getElementById('customMouse');
+    const moveCursor = (e)=> {
+        const mouseY = e.clientY;
+        const mouseX = e.clientX;
+        customMouse.style.transform = `translate3d(${mouseX - 8}px, ${mouseY - 2}px, 0)`;
+    }
+    window.addEventListener('mousemove', moveCursor)
+
+    const rangeInputs = document.querySelectorAll('input[type=range]');
+    rangeInputs.forEach(input => {
+        input.addEventListener('mouseenter', () => {
+            customMouse.style.display = 'none';
+        });
+        input.addEventListener('mouseleave', () => {
+            customMouse.style.display = 'block';
+        });
+    });
+
     // TODO - fix custom cursor after file upload
 
-    // TODO - add "Learn More" screen
-
-    // TODO - make end screen look nicer
+    // TODO - fix when adjusted to left, it goes black
+    // TODO - also, when sliding to left, overlay moves half the distance as to the right
 
     window.onbeforeunload = null;  // prevent page reload confirmation
 
@@ -221,8 +239,12 @@
             leftImage.src = result[1];
             rightImage.src = result[0];
 
+
+            document.getElementById('loading').style.display = 'flex';  // display loading
             setTimeout(function(){
                 drawCanvas();
+
+                document.getElementById('loading').style.display = 'none';  // hide loading
 
                 document.getElementById('secondScreenContainer').style.display = 'flex';
                 document.getElementById('background2').style.display = "flex";
@@ -233,7 +255,7 @@
                 //document.getElementById('createGifContainer').style.display = 'flex';
 
                 window.onbeforeunload = function(e) {return 'Reload page? Progress will not be saved';};  // page reload confirmation
-            }, 234);
+            }, 654);
 
             document.getElementById('initialModal').style.display = 'none';
         };
@@ -352,6 +374,10 @@
 
     function viewGif() {
         createFrames();
+
+        const colors = ['#f34132', '#f0b947', '#5394ce', '#b98af6'];
+        document.getElementById('viewGifModal').style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
         document.getElementById('viewGIF').style.display = 'flex';
         document.getElementById('viewGifModal').style.display = 'flex';
         document.getElementById('secondScreenModal').style.display = 'none';
