@@ -12,7 +12,7 @@
 </div>
 
 <h3 align="center">
-    <a href="https://othersites-ff76d.web.app"><strong>3DSwigglegram.com</strong></a>
+    <a href="https://3dswigglegram.com/"><strong>3DSwigglegram.com</strong></a>
 </h3>
 
 ___
