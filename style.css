@@ -1,28 +1,37 @@
+/* Load and declare font */
 @font-face {
     font-family: 'Wii';
     src: url('contm.ttf') format('truetype');
 }
 
+/* Selection/highlight color */
 ::selection {
     background: rgba(89, 211, 255, 0.36);
 }
 
-input[type=range] {
-    cursor: url('grab-cursor.png') 15 15, auto;
+/* Hide default cursor & Show custom cursor */
+body, button, html, input[type=range], input[type=file], input[type=file]::-webkit-file-upload-button,
+#adjustAmountLabel, #frameSpeed, ::-webkit-inner-spin-button, ::-webkit-outer-spin-button{
+    cursor: none;
+}
+#customMouse {
+    position: absolute;
+    z-index: 9999;
+    pointer-events: none;
+    user-select: none;
+    display: none;  /* Hide on all devices so doesn't show on mobile */
+    filter: drop-shadow(0 0 0.2rem rgba(0, 140, 255, 0.50));
+}
+@media (pointer: fine) {
+    #customMouse {
+        display: block;  /* Show the custom cursor only for devices with mouse input */
+    }
 }
 
-html {
+/* Body sizing corrections and BG/Font */
+html, body {
     overflow: hidden;
 }
-
-body, button, html, input[type=file], input[type=file]::-webkit-file-upload-button, #adjustAmountLabel, #frameSpeed {
-    /* cursor: url('hand-cursor.png') 8 2, auto !important; */
-    cursor: none;
-}
-::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
-    cursor: none;
-}
-
 body {
     font-family: Wii, sans-serif;
     background-color: #e6e6e6;
@@ -31,17 +40,10 @@ body {
     height: 100vh;
 }
 
-#customMouse {
-    position: absolute;
-    z-index: 9999;
-    pointer-events: none;
-    user-select: none;
-}
-
+/* Box shadow class and screen vignette */
 .shadow {
     box-shadow: rgba(0, 0, 0, 0.35) 0 5px 10px;
 }
-
 #vignette {
     width: 100vw;
     height: 100vh;
@@ -51,6 +53,7 @@ body {
     box-sizing: border-box;
 }
 
+/* Loading GIF */
 #loading {
     position: absolute;
     width: 100vw;
@@ -67,6 +70,7 @@ body {
     image-rendering: pixelated;
 }
 
+/* Background stripes */
 #backgroundTex {
     position: absolute;
     z-index: -3;
@@ -77,14 +81,10 @@ body {
     animation: bgTexMove 1.5s infinite linear;
 }
 @keyframes bgTexMove {
-    0% {
-        background-position-x: 0;
-    }
-    100% {
-        background-position-x: 1vw;
-    }
+    0% {background-position-x: 0;}
+    100% {background-position-x: 1vw;}
 }
-
+/* Background Stars */
 #backgroundYellow {
     position: absolute;
     z-index: -3;
@@ -104,14 +104,11 @@ body {
     animation: bgStarMove 15s infinite linear;
 }
 @keyframes bgStarMove {
-    0% {
-        background-position-x: 0;
-    }
-    100% {
-        background-position-x: 10vw;
-    }
+    0% {background-position-x: 0;}
+    100% {background-position-x: 10vw;}
 }
 
+/* Sam Bender 2024 site link */
 #creditsBottom {
     position: absolute;
     bottom: 20px;
@@ -119,10 +116,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px;
     z-index: 5;
     color: black;
     text-decoration: underline;
+    box-sizing: border-box;
 }
 #creditsBottom a {
     color: inherit;
@@ -132,7 +129,85 @@ body {
     color: #0075ff;
 }
 
+/* Main buttons */
+.main-btn {
+    width: 23rem;
+    height: 3.5rem;
+    padding: 0.85rem;
+    position: relative;
+    font-size: 1.25rem;
+    border: none;
+    border-radius: 0.75rem;
+    outline: 0.2rem solid white;
+    outline-offset: 0.2rem;
+    overflow: hidden;
+    cursor: none;
+    font-family: Wii, sans-serif;
+}
+#upload-mpo-btn {
+    width: 100%;
+    margin-bottom: 36px;
+}
+.buttonsRow2 .main-btn:first-child {
+    margin-right: 36px;
+}
+.main-btn:is(:hover, :focus-visible) {
+    background-color: rgb(190, 229, 255);
+}
+.main-btn:is(:hover, :focus-visible) .main-btn-fade,
+.main-btn:is(:hover, :focus-visible) .main-btn-pattern {
+    display: block;
+}
+.main-btn-fade,
+.main-btn-pattern {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.main-btn-fade {
+    z-index: 1;
+    background: linear-gradient(to left, rgb(238, 248, 255), transparent 120%);
+}
+.main-btn-pattern {
+    background-image: radial-gradient(rgb(255 255 255 / 0.6) 30%, transparent 30%);
+    background-position: 0% 0%;
+    background-size: 10px 10px;
+    animation: move-background 50s linear infinite;
+    transform: skew(-15deg, 0deg);
+}
+.main-btn-text {
+    position: relative;
+    z-index: 2;
+    color: black;
+    font-size: 1.25rem;
+}
+.main-btn-text-letter {
+    display: inline-flex;
+    position: relative;
+}
+.main-btn:is(:hover, :focus-visible) .main-btn-text-letter {
+    animation: bounce infinite;
+}
+@keyframes move-background {
+    0% {background-position: 0 0;}
+    100% {background-position: -100% 0;}
+}
 
+@keyframes bounce {
+    0%, 20%, 100% {translate: 0 0;}
+    10% {translate: 0 -12%;}
+}
+
+
+
+
+
+/* ##### LANDING SCREEN ##### */
+
+/* Instruction page */
 #instructionsModal {
     width: 100vw;
     height: 100vh;
@@ -180,23 +255,62 @@ body {
     width: 65%;
     text-align: left;
     display: flex;
-    align-items: center;  /* maybe remove?????????????????????????????????????????????????????????? */
+    align-items: center;
     font-size: 1.25rem;
     overflow: hidden;
 }
+/* Main page container */
+#initialModal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+}
+/* Inner modal */
+.mainPopup {
+    background-color: #222222;
+    padding: 30px 30px;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    color: #f0f0f0;
+}
+/* Inner modal heading text */
+.mainText {
+    margin-bottom: 140px;
+    font-size: 2rem
+}
+/* Inner modal subtext */
+.subText {
+    font-size: 1rem;
+    width: 60%;
+    margin-left: 20%;
+    padding-top: 16px;
+    color: #e6e6e6;
+}
+/* Inner modal GITHUB and INSTRUCTIONS buttons */
+.buttonsRow2 {
+    display: flex;
+    justify-content: space-between;
+}
 
 
+
+
+
+/* ##### SECOND SCREEN ##### */
+
+/* Overlay images difference */
 #differenceLabel {
     display: flex;
     justify-content: center;
     margin: 0;
     font-size: 1.5em;
     padding: 32px 0 26px 0;
-    /*
-    background-color: rgba(0, 0, 0, 0.85);
-    color: #f0f0f0;
-    padding: 12px 0;
-     */
 }
 #differenceControl {
     display: flex;
@@ -212,7 +326,7 @@ body {
     mix-blend-mode: difference;
 }
 
-
+/* Frame length input */
 #frameLengthContainer {
     display: flex;
     justify-content: center;
@@ -224,144 +338,12 @@ body {
     border-radius: 5px;
 }
 
-
-
-
-.modal-action {
-    width: 23rem;
-    height: 3.5rem;
-    padding: 0.85rem;
-    position: relative;
-    font-size: 1.25rem;
-    border: none;
-    border-radius: 0.75rem;
-    outline: 0.2rem solid white;
-    outline-offset: 0.2rem;
-    overflow: hidden;
-    cursor: none;
-    font-family: Wii, sans-serif;
-}
-#upload-mpo-btn {
-    width: 100%;
-    margin-bottom: 36px;
-}
-.buttonsRow2 .modal-action:first-child {
-    margin-right: 36px;
-}
-
-.modal-action:is(:hover, :focus-visible) {
-    background-color: rgb(190, 229, 255);
-}
-
-.modal-action:is(:hover, :focus-visible) .modal-action-fade,
-.modal-action:is(:hover, :focus-visible) .modal-action-pattern {
-    display: block;
-}
-
-.modal-action-fade,
-.modal-action-pattern {
-    display: none;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    left: 0px;
-    top: 0px;
-}
-
-.modal-action-fade {
-    z-index: 1;
-    background: linear-gradient(to left, rgb(238, 248, 255), transparent 120%);
-}
-
-.modal-action-pattern {
-    background-image: radial-gradient(
-            rgb(255 255 255 / 0.6) 30%,
-            transparent 30%
-    );
-    background-position: 0% 0%;
-    background-size: 10px 10px;
-    animation: move-background 50s linear infinite;
-    transform: skew(-15deg, 0deg);
-}
-
-.modal-action-text {
-    position: relative;
-    z-index: 2;
-    color: black;
-    font-size: 1.25rem;
-}
-
-.modal-action-text-letter {
-    display: inline-flex;
-    position: relative;
-}
-
-@keyframes move-background {
-    0% {
-        background-position: 0% 0%;
-    }
-
-    100% {
-        background-position: -100% 0%;
-    }
-}
-
-@keyframes bounce {
-    0%, 20%, 100% {
-        translate: 0% 0%;
-    }
-
-    10% {
-        translate: 0% -12%;
-    }
-}
-
-
-#initialModal {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-    position: absolute;
-}
-
-.mainPopup {
-    background-color: #222222;
-    padding: 30px 30px;
-    border-radius: 25px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    color: #f0f0f0;
-}
-
-.mainText {
-    margin-bottom: 140px;
-    font-size: 2rem
-}
-
-.subText {
-    font-size: 1rem;
-    width: 60%;
-    margin-left: 20%;
-    padding-top: 16px;
-    color: #e6e6e6;
-}
-
-.buttonsRow2 {
-    display: flex;
-    justify-content: space-between;
-}
-
-
+/* Buttons after GIF is created */
 #adjustAmountLabel {
     min-width: 55px;
     display: flex;
     justify-content: center;
 }
-
 #createGifContainer {
     margin-top: 12px;
 }
@@ -375,7 +357,30 @@ body {
     display: none;
 }
 
+/* Second screen container */
+#secondScreenContainer {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
 
+/* Second screen inner modal */
+#secondScreenModal {
+    display: flex;
+    flex-direction: column;
+    background-color: #222222;
+    border-radius: 25px;
+    color: #f0f0f0;
+    padding: 0 160px 24px 160px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* GIF that gets shown */
 #viewGIF {
     display: none;
     justify-content: center;
@@ -391,32 +396,7 @@ body {
     pointer-events: none;
 }
 
-
-
-
-#secondScreenContainer {
-    display: none;
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-#secondScreenModal {
-    display: flex;
-    flex-direction: column;
-    background-color: #222222;
-    border-radius: 25px;
-    color: #f0f0f0;
-    padding: 0 160px 24px 160px;
-    overflow: hidden;
-    position: relative;
-}
-
-
-
+/* View & Download GIF modal */
 #viewGifModal {
     display: flex;
     justify-content: center;
@@ -428,14 +408,12 @@ body {
     z-index: 4;
     color: #f0f0f0;
 
-
-
     background-image: url("stripeTexture.png");
     background-size: 1vw;
     animation: bgTexMove 1.5s infinite linear;
 }
 #viewGifModal button {
-    margin: 0 24px 24px 24px
+    margin: 0 24px 24px 24px;
 }
 #viewGifModal a {
     margin-bottom: 24px;
