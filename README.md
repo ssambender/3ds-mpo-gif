@@ -11,7 +11,7 @@
   <img src="https://github.com/ssambender/3ds-mpo-gif/blob/main/rose_wigglegram_100.gif?raw=true" height="300px"> <img src="https://github.com/ssambender/3ds-mpo-gif/blob/main/peace_wigglegram_100.gif?raw=true" height="300px">
 </div>
 
-<h3 align="center">https://othersites-ff76d.web.app</h3>
+<h3 align="center">[3DSwigglegram.com](https://othersites-ff76d.web.app)</h3>
 
 ___
 
