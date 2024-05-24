@@ -13,7 +13,6 @@
 
 <h3 align="center">https://othersites-ff76d.web.app</h3>
 
-
 ___
 
 ## Future Features
@@ -35,3 +34,11 @@ ___
 - [ ] Download in WebP format
 - [ ] Export as Parallel View image
 - [ ] Port a .3DS file in C++ to make Wigglegrams directly on the console
+
+___
+
+Special thanks:
+- Kevin Kwok (GIF Encoding)
+- Anthony Dekker (NeuQuant Neural-Net Quantization Algorithm)
+- k-hatano (.MPO file splitting)
+- Hyperplexed (Button UI inspiration)
