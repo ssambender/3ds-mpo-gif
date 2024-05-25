@@ -7,6 +7,7 @@
     <link rel="icon" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
 </head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YZCJSE3Z7C"></script>
 <body>
 
 <div id="loading"><img src="loading.gif"></div>
@@ -83,13 +84,17 @@
 
 <!-- IMAGE UPLOAD BUTTON -->
 <div id="initialModal">
+    <!--            major.minor.patch -->
+    <div id="versionNum">v1.9.0</div><!-- major: compatibility | minor: git push | minor: change not pushed to git -->
     <div class="mainPopup">
         <div class="mainText">
             3DS Wigglegram Maker from .MPO<br>
 
             <div class="subText">
-                Upload an <b>.mpo</b> image taken from a 3DS (or other stereoscopic device) and magically create a Wigglegram GIF!
+                Upload an <b>.mpo</b> image taken from a 3DS (or other stereoscopic device) and magically create a Wigglegram GIF!<br><br>
+                <span style="opacity: 50%;"><i>*All data is processed locally and is not sent/saved online.</i></span>
             </div>
+
         </div>
         <div class="buttonsContainer">
             <button id="upload-mpo-btn" type="button" class="main-btn" onclick="triggerFileUpload()">
@@ -128,12 +133,16 @@
         <!-- ADJUSTMENT SLIDER -->
         <div id="differenceLabel">
             Adjust the slider below so that main subject is the most black it can be.
+            <span style="opacity: 50%; font-size: 1rem;"><i>Use the scrollwheel over the slider to fine-tune adjustment.</i></span>
         </div>
         <div id="differenceControl">
-            <input id="adjustOverlap" type="range" min="-320" max="320" style="width: 500px"><span id="adjustAmountLabel">0px</span>
+            <input id="adjustOverlap" type="range" min="-320" max="320" style="width: 500px">
+            <span id="adjustAmountLabel">0px</span>
         </div>
         <!-- ADJUSTMENT OVERLAY IMAGES -->
         <div id="differenceContainer">
+            <input id="adjustOverlapVert" type="range" min="-20" max="20" orient="vertical">
+            <span id="adjustAmountLabelVert" style="position: absolute;">0px</span>
             <canvas id="canvas_overlap" width="640px" height="480px"></canvas>
             <canvas id="canvas_bottom" width="640px" height="480px"></canvas>
         </div>
@@ -216,6 +225,7 @@
 
     let imageName = "";
     let overlayOffset = 0;
+    let verticalOffset = 0;
     let frameSpeed = 100;
 
     var leftImage = new Image();
@@ -322,7 +332,6 @@
     // Range slider to adjust overlay
     function adjustChanged() {
         document.getElementById("canvas_overlap").style.marginLeft = document.getElementById('adjustOverlap').value.toString() + "px";
-        //document.getElementById("canvas_overlap").style.paddingLeft = document.getElementById('adjustOverlap').value.toString() + "px";
         document.getElementById('adjustAmountLabel').innerText = document.getElementById('adjustOverlap').value.toString() + "px";
         overlayOffset = document.getElementById('adjustOverlap').value / 2;
     }
@@ -340,6 +349,26 @@
         adjustChanged();
     })
 
+    function adjustChangedVert() {
+        document.getElementById("canvas_overlap").style.marginTop = (document.getElementById('adjustOverlapVert').value * -1).toString() + "px";
+        document.getElementById('adjustAmountLabelVert').innerText = document.getElementById('adjustOverlapVert').value.toString() + "px";
+        verticalOffset = document.getElementById('adjustOverlapVert').value;
+    }
+    document.getElementById('adjustOverlapVert').addEventListener("input", function() {
+        adjustChangedVert();
+    }, false);
+    document.getElementById('adjustOverlapVert').addEventListener("wheel", function(e){
+        if (e.deltaY < 0){
+            document.getElementById('adjustOverlapVert').valueAsNumber += 1;
+        }else{
+            document.getElementById('adjustOverlapVert').value -= 1;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        adjustChangedVert();
+    })
+
+
     // Changing frame ms speed from input
     document.getElementById('frameSpeed').addEventListener("input", function() {
         frameSpeed = document.getElementById('frameSpeed').value;
@@ -351,7 +380,9 @@
         var frame_crop2 = document.getElementById('canvas_cropped2');
         var frame_crop3 = document.getElementById('canvas_cropped3');
         let crop_width;
+        let crop_height = 480 - Math.abs(verticalOffset);  // height
         let overlapRight = true;
+        let moveUp = true;  // height
         if(overlayOffset > 0){
             crop_width = (160 + canvasWidth) - (160 + parseInt(overlayOffset));
         }
@@ -359,41 +390,83 @@
             crop_width = (160 + canvasWidth + parseInt(overlayOffset)) - 160;
             overlapRight = false;
         }
+        if(verticalOffset < 0) {
+            moveUp = false;
+        }
         frame_crop1.width = crop_width;
+        frame_crop1.height = crop_height;  // height
         frame_crop2.width = crop_width;
+        frame_crop2.height = crop_height;  // height
         frame_crop3.width = crop_width;
+        frame_crop3.height = crop_height;  // height
 
         var ctx_crop1 = frame_crop1.getContext('2d');
-        ctx_crop1.clearRect(0, 0, crop_width, canvasHeight);  //parseInt(overlayOffset)
+        ctx_crop1.clearRect(0, 0, crop_width, crop_height);  //parseInt(overlayOffset)
         if(overlapRight) {
-            ctx_crop1.drawImage(leftImage, 0 - parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
+            if(moveUp) {
+                ctx_crop1.drawImage(leftImage, 0 - parseInt(overlayOffset), 0, canvasWidth, canvasHeight);  // no change
+            }
+            else {
+                ctx_crop1.drawImage(leftImage, 0 - parseInt(overlayOffset), Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight);  // changed
+            }
         }
         else {
-            ctx_crop1.drawImage(leftImage, 0, 0, canvasWidth, canvasHeight);
+            if(moveUp) {
+                ctx_crop1.drawImage(leftImage, 0, 0, canvasWidth, canvasHeight);  // no change
+            }
+            else {
+                ctx_crop1.drawImage(leftImage, 0, Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight);  // changed
+            }
         }
 
         var ctx_crop2 = frame_crop2.getContext('2d');
         ctx_crop2.clearRect(0, 0, crop_width, canvasHeight);
         ctx_crop2.globalAlpha = 1;
         if(overlapRight) {
-            ctx_crop2.drawImage(leftImage, 0 - parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
-            ctx_crop2.globalAlpha = 0.5;
-            ctx_crop2.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight);
+            if(moveUp) {
+                ctx_crop2.drawImage(leftImage, 0 - parseInt(overlayOffset), 0, canvasWidth, canvasHeight); //no change
+                ctx_crop2.globalAlpha = 0.5;
+                ctx_crop2.drawImage(rightImage, 0, Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight); //changed
+            }
+            else {
+                ctx_crop2.drawImage(leftImage, 0 - parseInt(overlayOffset), Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight); //changed
+                ctx_crop2.globalAlpha = 0.5;
+                ctx_crop2.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight); //no change
+            }
         }
         else {
-            ctx_crop2.drawImage(leftImage, 0, 0, canvasWidth, canvasHeight);
-            ctx_crop2.globalAlpha = 0.5;
-            ctx_crop2.drawImage(rightImage, parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
+            if(moveUp) {
+                ctx_crop2.drawImage(leftImage, 0, 0, canvasWidth, canvasHeight);  //no change
+                ctx_crop2.globalAlpha = 0.5;
+                ctx_crop2.drawImage(rightImage, parseInt(overlayOffset), Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight);  //changed
+            }
+            else {
+                ctx_crop2.drawImage(leftImage, 0, Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight);  //changed
+                ctx_crop2.globalAlpha = 0.5;
+                ctx_crop2.drawImage(rightImage, parseInt(overlayOffset), 0, canvasWidth, canvasHeight);  //no change
+            }
         }
 
         var ctx_crop3 = frame_crop3.getContext('2d');
         ctx_crop3.clearRect(0, 0, crop_width, canvasHeight);
         if(overlapRight) {
-            ctx_crop3.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight);
+            if(moveUp) {
+                ctx_crop3.drawImage(rightImage, 0, Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight);
+            }
+            else {
+                ctx_crop3.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight); // no change
+            }
         }
         else {
-            ctx_crop3.drawImage(rightImage, parseInt(overlayOffset), 0, canvasWidth, canvasHeight);
+            if(moveUp) {
+                ctx_crop3.drawImage(rightImage, parseInt(overlayOffset), Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight);
+            }
+            else {
+                ctx_crop3.drawImage(rightImage, parseInt(overlayOffset), 0, canvasWidth, canvasHeight); // no change
+            }
         }
+        console.log({moveUp});
+        console.log({overlapRight});
 
         var encoder = new GIFEncoder();
         encoder.setRepeat(0);
@@ -437,7 +510,7 @@
 
         var downloadLink = document.createElement('a');
         downloadLink.href = gifSrc;
-        downloadLink.download = imageName + "_wigglegram_" + frameSpeed.toString() + ".gif";
+        downloadLink.download = imageName + "_wigglegram" + ".gif";
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
