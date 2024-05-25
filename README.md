@@ -21,7 +21,7 @@ ___
 
 - [x] View .mpo images
 - [x] Adjust horizontal position of images
-- [ ] Adjust vertical position of images
+- [x] Adjust vertical position of images
 - [x] Custom instructions screen
 - [x] Custom loading animation
 - [ ] Make custom styled range input bar
@@ -32,9 +32,12 @@ ___
 - [ ] Choose the amount of frames to generate (2, 3, 4+)
 - [x] Use scroll wheel on range inputs
 - [x] Download in GIF format
-- [ ] Download in APNG format
-- [ ] Download in WebP format
+- [ ] Download in APNG + WebP format
 - [ ] Export as Parallel View image
+- [ ] Support WebRTC to transfer images directly from 3DS to website without needing SD card or FTP
+
+And of course...
+
 - [ ] Port a .3DS file in C++ to make Wigglegrams directly on the console
 
 ___
