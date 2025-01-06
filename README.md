@@ -8,7 +8,9 @@
 
 <div align="center">
     <img src="https://github.com/ssambender/3ds-mpo-gif/blob/main/sam_wigglegram_100.gif?raw=true" height="300px"> <img src="https://github.com/ssambender/3ds-mpo-gif/blob/main/DQ_wigglegram_100.gif?raw=true" height="300px">
-  <img src="https://github.com/ssambender/3ds-mpo-gif/blob/main/rose_wigglegram_100.gif?raw=true" height="300px"> <img src="https://github.com/ssambender/3ds-mpo-gif/blob/main/peace_wigglegram_100.gif?raw=true" height="300px">
+    <img src="https://github.com/ssambender/3ds-mpo-gif/blob/main/rose_wigglegram_100.gif?raw=true" height="300px"> <img src="https://github.com/ssambender/3ds-mpo-gif/blob/main/peace_wigglegram_100.gif?raw=true" height="300px"><br>
+    Comparison of 3D anaglyph & GIF:<br>
+    <img src="https://github.com/ssambender/3ds-mpo-gif/blob/main/HNI_0077_anaglyph.png?raw=true" height="300px"> <img src="https://github.com/ssambender/3ds-mpo-gif/blob/main/HNI_0077_wigglegram-ezgif.com-rotate.gif?raw=true" height="300px">
 </div>
 
 <h3 align="center">
