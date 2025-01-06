@@ -8,6 +8,13 @@
     <link rel="apple-touch-icon" href="icon.png">
 </head>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-YZCJSE3Z7C"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-YZCJSE3Z7C');
+</script>
 <body>
 
 <div id="loading"><img src="loading.gif"></div>
@@ -167,18 +174,24 @@
             <img id="finalGif" class="shadow">
         </div>
 
-        <button type="button" class="main-btn" onclick="downloadGif()" style="margin-bottom: 36px;">
-            <div class="main-btn-pattern"></div>
-            <div class="main-btn-fade"></div>
-            <span class="main-btn-text inter-font">DOWNLOAD GIF</span>
-        </button>
+        <div style="display: flex">
+            <button type="button" class="main-btn" onclick="downloadGif()" style="width: 11rem; margin: 0 12px 36px 12px;">
+                <div class="main-btn-pattern"></div>
+                <div class="main-btn-fade"></div>
+                <span class="main-btn-text inter-font">DOWNLOAD GIF</span>
+            </button>
+            <button type="button" class="main-btn" onclick="download3dAnaglyph()" style="width: 10.5rem; margin: 0 12px 36px 12px;">
+                <div class="main-btn-pattern"></div>
+                <div class="main-btn-fade"></div>
+                <span class="main-btn-text inter-font">3D ANAGLYPH</span>
+            </button>
+        </div>
 
         <button type="button" class="main-btn" onclick="readjustImage()">
             <div class="main-btn-pattern"></div>
             <div class="main-btn-fade"></div>
             <span class="main-btn-text inter-font">READJUST IMAGE</span>
         </button>
-
 
         <a onclick="makeAnother();">MAKE ANOTHER!</a>
     </div>
@@ -494,6 +507,7 @@
         document.getElementById('viewGIF').style.display = 'flex';
         document.getElementById('viewGifModal').style.display = 'flex';
         document.getElementById('secondScreenModal').style.display = 'none';
+
     }
 
     // Readjust Img button pressed
@@ -502,6 +516,47 @@
         document.getElementById('viewGifModal').style.display = 'none';
         document.getElementById('secondScreenModal').style.display = 'flex';
     }
+
+    function download3dAnaglyph() {
+        let leftImage = document.getElementById('canvas_cropped1');
+        let rightImage = document.getElementById('canvas_cropped3');
+
+        const canvas = document.createElement('canvas');
+        canvas.width = leftImage.width;
+        canvas.height = leftImage.height;
+        const ctx = canvas.getContext('2d');
+
+        // Draw left/right images
+        ctx.drawImage(leftImage, 0, 0);
+        const leftImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(rightImage, 0, 0);
+        const rightImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        // Create new imageadata canvas for 3d anaglyph
+        const anaglyphData = ctx.createImageData(canvas.width, canvas.height);
+        const dataLeft = leftImageData.data;
+        const dataRight = rightImageData.data;
+        const dataAnaglyph = anaglyphData.data;
+
+        // Overlay left/right
+        for (let i = 0; i < dataLeft.length; i += 4) {
+            dataAnaglyph[i] = dataLeft[i];          // R channel left
+            dataAnaglyph[i + 1] = dataRight[i + 1]; // G channel right
+            dataAnaglyph[i + 2] = dataRight[i + 2]; // B channel right
+            dataAnaglyph[i + 3] = 255; // Fully opaque
+        }
+
+        // Save overalyed left/right to back to imagedata canvas
+        ctx.putImageData(anaglyphData, 0, 0);
+
+        // Download
+        const link = document.createElement('a');
+        link.download = imageName + '_anaglyph.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }
+
     // Download Gif button pressed
     function downloadGif() {
         createFrames();
