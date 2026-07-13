@@ -1,424 +1,639 @@
-/* Load and declare font */
 @font-face {
     font-family: 'Wii';
     src: url('contm.ttf') format('truetype');
 }
 
-/* Selection/highlight color */
+:root {
+    color-scheme: light;
+    --ink: #17202a;
+    --muted: #657386;
+    --panel: rgba(255, 255, 255, 0.94);
+    --panel-strong: #ffffff;
+    --line: rgba(23, 32, 42, 0.14);
+    --blue: #2477e6;
+    --blue-dark: #1558b0;
+    --green: #21a67a;
+    --coral: #ef6351;
+    --amber: #f4b942;
+    --shadow: 0 24px 70px rgba(26, 39, 56, 0.22);
+    --radius: 8px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
 ::selection {
-    background: rgba(89, 211, 255, 0.36);
+    background: rgba(36, 119, 230, 0.22);
 }
 
-/* Hide default cursor & Show custom cursor */
-body, button, html, input[type=range], input[type=file], input[type=file]::-webkit-file-upload-button,
-#adjustAmountLabel, #frameSpeed, ::-webkit-inner-spin-button, ::-webkit-outer-spin-button{
-    cursor: none;
-}
-#customMouse {
-    position: absolute;
-    z-index: 9999;
-    pointer-events: none;
-    user-select: none;
-    display: none;  /* Hide on all devices so doesn't show on mobile */
-    filter: drop-shadow(0 0 0.2rem rgba(0, 140, 255, 0.50));
-}
-@media (pointer: fine) {
-    #customMouse {
-        display: block;  /* Show the custom cursor only for devices with mouse input */
-    }
-}
-
-/* Body sizing corrections and BG/Font */
-html, body {
+html,
+body {
+    min-height: 100%;
     overflow: hidden;
 }
+
 body {
-    font-family: Wii, sans-serif;
-    background-color: #e6e6e6;
+    font-family: Wii, "Trebuchet MS", Arial, sans-serif;
+    color: var(--ink);
+    background:
+        radial-gradient(circle at 12% 18%, rgba(244, 185, 66, 0.32), transparent 26vw),
+        radial-gradient(circle at 86% 12%, rgba(36, 119, 230, 0.22), transparent 28vw),
+        linear-gradient(135deg, #f8fbff 0%, #edf3f8 52%, #f8f1e8 100%);
     margin: 0;
     width: 100vw;
     height: 100vh;
 }
 
-/* Box shadow class and screen vignette */
-.shadow {
-    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 10px;
-}
-#vignette {
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    z-index: -1;
-    box-shadow: inset 0 0 50px 0 rgba(0, 0, 0, 0.5);
-    box-sizing: border-box;
+button,
+input,
+a {
+    font: inherit;
 }
 
-/* Loading GIF */
-#loading {
+button,
+a,
+input[type="checkbox"],
+input[type="range"] {
+    cursor: pointer;
+}
+
+.shadow {
+    box-shadow: 0 16px 48px rgba(13, 30, 51, 0.28);
+}
+
+#vignette {
     position: absolute;
+    inset: 0;
+    z-index: -1;
+    box-shadow: inset 0 0 90px rgba(16, 31, 48, 0.12);
+    pointer-events: none;
+}
+
+#backgroundTex,
+#backgroundYellow,
+#backgroundStars {
+    position: absolute;
+    inset: 0;
     width: 100vw;
     height: 100vh;
+}
+
+#backgroundTex {
+    z-index: -3;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.56) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.56) 1px, transparent 1px);
+    background-size: 42px 42px;
+    opacity: 0.5;
+}
+
+#backgroundYellow {
+    z-index: -3;
+    background:
+        linear-gradient(110deg, rgba(33, 166, 122, 0.1), transparent 40%),
+        linear-gradient(260deg, rgba(239, 99, 81, 0.12), transparent 48%);
+}
+
+#backgroundStars {
+    z-index: -2;
+    background-image: radial-gradient(circle, rgba(23, 32, 42, 0.2) 1px, transparent 1.5px);
+    background-size: 28px 28px;
+    opacity: 0.16;
+    animation: bgStarMove 18s infinite linear;
+}
+
+@keyframes bgStarMove {
+    0% { background-position-x: 0; }
+    100% { background-position-x: 28px; }
+}
+
+#loading {
+    position: absolute;
+    inset: 0;
     z-index: 100;
     display: none;
     justify-content: center;
     align-items: center;
+    background: rgba(248, 251, 255, 0.74);
+    backdrop-filter: blur(10px);
     pointer-events: none;
     user-select: none;
 }
-#loading img {
-    transform: scale(2);
-    image-rendering: pixelated;
+
+.loader {
+    width: 54px;
+    height: 54px;
+    border: 5px solid rgba(36, 119, 230, 0.18);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 800ms linear infinite;
 }
 
-/* Background stripes */
-#backgroundTex {
-    position: absolute;
-    z-index: -3;
-    width: 100vw;
-    height: 100vh;
-    background-image: url("stripeTexture.png");
-    background-size: 1vw;
-    animation: bgTexMove 1.5s infinite linear;
-}
-@keyframes bgTexMove {
-    0% {background-position-x: 0;}
-    100% {background-position-x: 1vw;}
-}
-/* Background Stars */
-#backgroundYellow {
-    position: absolute;
-    z-index: -3;
-    width: 100vw;
-    height: 100vh;
-    background: #e6e6e6;
-}
-#backgroundStars {
-    position: absolute;
-    z-index: -2;
-    width: 100vw;
-    height: 100vh;
-    background-image: url("starTexture.svg");
-    background-size: 10vw;
-    opacity: 5%;
-    filter: invert();
-    animation: bgStarMove 15s infinite linear;
-}
-@keyframes bgStarMove {
-    0% {background-position-x: 0;}
-    100% {background-position-x: 10vw;}
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
-/* Sam Bender 2024 site link */
 #creditsBottom {
     position: absolute;
-    bottom: 20px;
+    bottom: 18px;
     width: 100vw;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 5;
-    color: black;
-    text-decoration: underline;
-    box-sizing: border-box;
-}
-#creditsBottom a {
-    color: inherit;
-    cursor: inherit;
-}
-#creditsBottom a:hover {
-    color: #0075ff;
+    gap: 4px;
+    color: rgba(23, 32, 42, 0.72);
+    font-size: 0.9rem;
+    text-decoration: none;
+    pointer-events: none;
 }
 
-/* Main buttons */
+#creditsBottom a {
+    color: inherit;
+    pointer-events: auto;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+#creditsBottom a:hover {
+    color: var(--blue-dark);
+}
+
 .main-btn {
-    width: 23rem;
-    height: 3.5rem;
-    padding: 0.85rem;
-    position: relative;
-    font-size: 1.25rem;
-    border: none;
-    border-radius: 0.75rem;
-    outline: 0.2rem solid white;
-    outline-offset: 0.2rem;
-    overflow: hidden;
-    cursor: none;
-    font-family: Wii, sans-serif;
-}
-#upload-mpo-btn {
     width: 100%;
-    margin-bottom: 36px;
+    min-height: 3.35rem;
+    padding: 0.85rem 1rem;
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid rgba(21, 88, 176, 0.28);
+    border-radius: var(--radius);
+    background: linear-gradient(180deg, #ffffff 0%, #e8f2ff 100%);
+    color: var(--ink);
+    box-shadow: 0 9px 0 rgba(21, 88, 176, 0.16), 0 16px 28px rgba(22, 45, 72, 0.14);
+    overflow: hidden;
+    transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
 }
-.buttonsRow2 .main-btn:first-child {
-    margin-right: 36px;
-}
+
 .main-btn:is(:hover, :focus-visible) {
-    background-color: rgb(190, 229, 255);
+    border-color: rgba(36, 119, 230, 0.64);
+    box-shadow: 0 6px 0 rgba(21, 88, 176, 0.16), 0 18px 34px rgba(22, 45, 72, 0.18);
+    transform: translateY(2px);
 }
-.main-btn:is(:hover, :focus-visible) .main-btn-fade,
-.main-btn:is(:hover, :focus-visible) .main-btn-pattern {
-    display: block;
+
+.main-btn:focus-visible {
+    outline: 3px solid rgba(36, 119, 230, 0.32);
+    outline-offset: 3px;
 }
+
 .main-btn-fade,
 .main-btn-pattern {
     display: none;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
 }
-.main-btn-fade {
-    z-index: 1;
-    background: linear-gradient(to left, rgb(238, 248, 255), transparent 120%);
-}
-.main-btn-pattern {
-    background-image: radial-gradient(rgb(255 255 255 / 0.6) 30%, transparent 30%);
-    background-position: 0% 0%;
-    background-size: 10px 10px;
-    animation: move-background 50s linear infinite;
-    transform: skew(-15deg, 0deg);
-}
+
 .main-btn-text {
     position: relative;
     z-index: 2;
-    color: black;
-    font-size: 1.25rem;
+    font-size: 1.08rem;
+    color: var(--ink);
+    line-height: 1.1;
+    text-align: center;
 }
+
 .main-btn-text-letter {
     display: inline-flex;
     position: relative;
 }
+
 .main-btn:is(:hover, :focus-visible) .main-btn-text-letter {
-    animation: bounce infinite;
-}
-@keyframes move-background {
-    0% {background-position: 0 0;}
-    100% {background-position: -100% 0;}
+    animation: bounce 900ms ease;
 }
 
 @keyframes bounce {
-    0%, 20%, 100% {translate: 0 0;}
-    10% {translate: 0 -12%;}
+    0%, 100% { translate: 0 0; }
+    45% { translate: 0 -10%; }
 }
 
+#upload-mpo-btn {
+    width: 100%;
+    margin-bottom: 22px;
+    background: linear-gradient(180deg, #2f86f6 0%, #1766ca 100%);
+    border-color: rgba(10, 63, 130, 0.24);
+}
 
+#upload-mpo-btn .main-btn-text {
+    color: #ffffff;
+}
 
+.buttonsRow2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
 
+.buttonsRow2 .main-btn:first-child {
+    margin-right: 0;
+}
 
-/* ##### LANDING SCREEN ##### */
-
-/* Instruction page */
-#instructionsModal {
+#instructionsModal,
+#initialModal,
+#secondScreenContainer {
     width: 100vw;
     height: 100vh;
     position: absolute;
-    z-index: 3;
-    display: none;
     justify-content: center;
     align-items: center;
+    padding: clamp(16px, 4vw, 44px);
 }
+
+#instructionsModal {
+    z-index: 3;
+    display: none;
+    align-items: flex-start;
+    overflow-y: auto;
+}
+
+#initialModal {
+    display: flex;
+}
+
+#instructionsModal .mainPopup {
+    flex-shrink: 0;
+}
+
+.mainPopup,
+#secondScreenModal,
+#viewGifModal {
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: var(--radius);
+    background: var(--panel);
+    color: var(--ink);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(16px);
+}
+
+.mainPopup {
+    width: min(865px, 94vw);
+    padding: clamp(24px, 5vw, 44px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.mainText {
+    margin-bottom: 48px;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    line-height: 1;
+    color: var(--ink);
+}
+
+.subText {
+    width: min(560px, 100%);
+    margin: 0 auto;
+    padding-top: 18px;
+    color: var(--muted);
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    line-height: 1.45;
+}
+
 #instructionsContainer {
-    margin-bottom: 40px;
-    width: 500px;
+    width: min(620px, 100%);
+    margin: 0 auto 30px;
 }
+
 .instructStep {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
 }
-.instructStep:first-child {
-    border-top: none;
-}
+
 .instructDivider {
     width: 100%;
-    height: 3px;
-    background-color: white;
-    margin: 16px 0;
-    border-radius: 20px;
+    height: 1px;
+    background-color: var(--line);
+    margin: 18px 0;
 }
+
 .mainInstruction {
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    height: 120px;
+    min-height: 112px;
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 18px;
+    align-items: center;
     overflow: hidden;
 }
-.instructStep img {
-    width: 30%;
-    border-radius: 10px;
-    object-fit: fill;
-    user-select: none;
-    pointer-events: none;
-}
-.explain {
-    width: 65%;
-    text-align: left;
+
+.stepBadge {
+    width: 100%;
+    height: 108px;
     display: flex;
     align-items: center;
-    font-size: 1.25rem;
-    overflow: hidden;
-}
-/* Main page container */
-#initialModal {
-    display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-    position: absolute;
+    border-radius: var(--radius);
+    background:
+        linear-gradient(135deg, rgba(36, 119, 230, 0.9), rgba(33, 166, 122, 0.9)),
+        var(--blue);
+    color: #ffffff;
+    font-size: 3.2rem;
+    user-select: none;
+    box-shadow: 0 10px 24px rgba(24, 36, 52, 0.12);
 }
-/* Inner modal */
-.mainPopup {
-    background-color: #222222;
-    padding: 30px 30px;
-    border-radius: 25px;
+
+.explain {
+    text-align: left;
+    font-size: 1.08rem;
+    line-height: 1.35;
+    color: var(--ink);
+}
+
+#secondScreenContainer {
+    display: none;
+    flex-direction: column;
+}
+
+#secondScreenModal {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    color: #f0f0f0;
-}
-/* Inner modal heading text */
-.mainText {
-    margin-bottom: 140px;
-    font-size: 2rem
-}
-/* Inner modal subtext */
-.subText {
-    font-size: 1rem;
-    width: 60%;
-    margin-left: 20%;
-    padding-top: 16px;
-    color: #e6e6e6;
-}
-/* Inner modal GITHUB and INSTRUCTIONS buttons */
-.buttonsRow2 {
-    display: flex;
-    justify-content: space-between;
+    width: min(1120px, 96vw);
+    max-height: 94vh;
+    padding: clamp(18px, 3vw, 30px);
+    overflow: auto;
 }
 
-
-
-
-
-/* ##### SECOND SCREEN ##### */
-
-/* Overlay images difference */
 #differenceLabel {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
     margin: 0;
-    font-size: 1.5em;
-    padding: 32px 0 26px 0;
+    padding: 0 0 18px;
+    text-align: center;
 }
+
+#differenceLabel span:first-child {
+    font-size: clamp(1.8rem, 4vw, 2.7rem);
+    line-height: 1;
+}
+
+#differenceLabel span:last-child {
+    max-width: 720px;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
 #differenceControl {
     display: flex;
     justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
 }
+
+#adjustAmountLabel,
+#adjustAmountLabelVert {
+    min-width: 60px;
+    padding: 6px 8px;
+    display: inline-flex;
+    justify-content: center;
+    color: var(--muted);
+    background: rgba(23, 32, 42, 0.06);
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+}
+
 #differenceContainer {
     display: flex;
     justify-content: center;
-    margin: 8px 0 12px 0;
+    align-items: center;
+    gap: 18px;
+    margin: 0 0 18px;
 }
+
+#previewCanvasStack {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(23, 32, 42, 0.16);
+    border-radius: var(--radius);
+    background: #101820;
+    box-shadow: 0 18px 42px rgba(16, 31, 48, 0.22);
+}
+
 #canvas_overlap {
     position: absolute;
     mix-blend-mode: difference;
+    left: 0;
+    top: 0;
 }
 
-/* Frame length input */
-#frameLengthContainer {
-    display: flex;
-    justify-content: center;
-    font-size: 1.15rem;
-}
-#frameLengthContainer input {
-    font-family: Wii, sans-serif;
-    border: solid 2px black;
-    border-radius: 5px;
+#canvas_bottom {
+    display: block;
 }
 
-/* Buttons after GIF is created */
-#adjustAmountLabel {
-    min-width: 55px;
+input[type="range"] {
+    accent-color: var(--blue);
+}
+
+#adjustOverlapVert {
+    accent-color: var(--coral);
+}
+
+#gifSettingsContainer {
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    color: var(--ink);
+    font-size: 1rem;
 }
+
+.settingField,
+.settingToggle {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel-strong);
+}
+
+#frameSpeed {
+    width: 78px;
+    min-height: 34px;
+    padding: 5px 8px;
+    color: var(--ink);
+    border: 1px solid rgba(23, 32, 42, 0.2);
+    border-radius: var(--radius);
+    background: #ffffff;
+}
+
+.settingToggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.toggleMark {
+    width: 42px;
+    height: 24px;
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: #c7d2df;
+    transition: background 140ms ease;
+}
+
+.toggleMark::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 7px rgba(23, 32, 42, 0.24);
+    transition: transform 140ms ease;
+}
+
+.settingToggle input:checked + .toggleMark {
+    background: var(--green);
+}
+
+.settingToggle input:checked + .toggleMark::after {
+    transform: translateX(18px);
+}
+
+.settingToggle input:focus-visible + .toggleMark {
+    outline: 3px solid rgba(36, 119, 230, 0.28);
+    outline-offset: 3px;
+}
+
+.settingToggle.is-disabled {
+    color: var(--muted);
+}
+
+.settingToggle.is-disabled .toggleMark {
+    opacity: 0.72;
+}
+
 #createGifContainer {
     margin-top: 12px;
 }
+
 #createGifContainer button {
-    margin-left: 36px;
-}
-#createGifContainer button:first-child {
     margin-left: 0;
 }
+
 #makeAnotherBtn {
     display: none;
 }
 
-/* Second screen container */
-#secondScreenContainer {
-    display: none;
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-/* Second screen inner modal */
-#secondScreenModal {
-    display: flex;
-    flex-direction: column;
-    background-color: #222222;
-    border-radius: 25px;
-    color: #f0f0f0;
-    padding: 0 160px 24px 160px;
-    overflow: hidden;
-    position: relative;
-}
-
-/* GIF that gets shown */
 #viewGIF {
     display: none;
     justify-content: center;
     align-items: center;
     user-select: none;
 }
+
 #viewGIF img {
-    transform: scale(0.8);
-    border: solid 3px #ffffff;
+    max-width: 90vw;
+    max-height: 70vh;
+    border: 3px solid #ffffff;
+    border-radius: var(--radius);
     box-sizing: border-box;
-    border-radius: 20px;
     user-select: none;
     pointer-events: none;
 }
 
-/* View & Download GIF modal */
 #viewGifModal {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     position: absolute;
-    background-color: rgb(243, 65, 50);
-    border-radius: 25px;
     z-index: 4;
-    color: #f0f0f0;
+    padding: 22px;
+    color: var(--ink);
+}
 
-    background-image: url("stripeTexture.png");
-    background-size: 1vw;
-    animation: bgTexMove 1.5s infinite linear;
-}
 #viewGifModal button {
-    margin: 0 24px 24px 24px;
+    margin: 0 12px 22px;
 }
+
+.resultActions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.resultActions .main-btn {
+    width: 12rem;
+}
+
 #viewGifModal a {
-    margin-bottom: 24px;
+    margin-bottom: 4px;
+    color: var(--ink);
     text-decoration: underline;
+    text-underline-offset: 3px;
 }
+
 #viewGifModal a:hover {
-    color: black;
+    color: var(--blue-dark);
+}
+
+@media (max-width: 760px) {
+    html,
+    body {
+        overflow: auto;
+    }
+
+    .mainPopup,
+    #secondScreenModal {
+        width: min(100%, 96vw);
+    }
+
+    .mainText {
+        margin-bottom: 32px;
+    }
+
+    .buttonsRow2 {
+        grid-template-columns: 1fr;
+    }
+
+    .main-btn {
+        width: 100%;
+    }
+
+    .mainInstruction {
+        grid-template-columns: 1fr;
+    }
+
+    .stepBadge {
+        height: 160px;
+    }
+
+    #differenceContainer {
+        gap: 10px;
+    }
+
+    #gifSettingsContainer {
+        align-items: stretch;
+    }
+
+    .settingField,
+    .settingToggle {
+        width: 100%;
+        justify-content: center;
+    }
 }

@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>3DS Wigglegram</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wigglegram Generator (3DS Compatible)</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
@@ -17,7 +18,7 @@
 </script>
 <body>
 
-<div id="loading"><img src="loading.gif"></div>
+<div id="loading"><div class="loader"></div></div>
 <div id="backgroundTex"></div>
 <div id="vignette"></div>
 <div id="background2" style="display: none;">
@@ -25,8 +26,9 @@
     <div id="backgroundStars"></div>
 </div>
 
-<div id="creditsBottom">
-    <a href="https://sambender.net" target="_blank">Sam Bender 2024</a>
+<div id="creditsBottom" style="display: flex; flex-direction: column; gap: 5px;">
+    <div id="versionNum">v2.0.0</div>
+    <a href="https://lsblackburn.co.uk" target="_blank">lsblackburn 2026</a>
 </div>
 
 <!-- INSTRUCTIONS MODAL -->
@@ -38,42 +40,60 @@
         <div id="instructionsContainer">
             <div class="instructStep">
                 <div class="mainInstruction">
-                    <img src="step1.png">
+                    <div class="stepBadge">1</div>
                     <div class="explain">
-                        Take photos on 3DS as normal, or locate previously taken photos. Try to keep the camera as horizontal as possible for best results!
+                        Choose your source images. You can use one 3DS .MPO file, two matching JPG/PNG images, or three matching JPG/PNG images from a Nimslo-style camera.
                     </div>
                 </div>
                 <div style="padding-top: 6px; opacity: 65%;">
-                    Optional: Enable the camera level by pressing down on the D-PAD
+                    Keep the camera as level as possible for the cleanest wiggle.
                 </div>
             </div>
             <div class="instructDivider"></div>
             <div class="instructStep">
                 <div class="mainInstruction">
-                    <img src="step2.png">
+                    <div class="stepBadge">2</div>
                     <div class="explain">
-                        If not already on the SD card, save the photos to the SD card. Load the images onto your computer or phone either by SD card or FTP.
+                        For 3DS photos, upload a single .MPO file. If needed, copy it from the SD card or transfer it by FTP first.
                     </div>
                 </div>
                 <div style="padding-top: 6px; opacity: 65%;">
-                    (Photos can be found in the DCIM folder)
+                    3DS photos can usually be found in the DCIM folder.
                 </div>
             </div>
             <div class="instructDivider"></div>
             <div class="instructStep">
                 <div class="mainInstruction">
-                    <img src="step3.png">
+                    <div class="stepBadge">3</div>
                     <div class="explain">
-                        On the website, open the .MPO file. Drag the adjustment slider until the focal point of your image is as black as it can be. Pick frame length ms.
+                        For two-image uploads, select the left image first and the right image second. The app can add an optional blended interpolation frame between them.
                     </div>
                 </div>
             </div>
             <div class="instructDivider"></div>
             <div class="instructStep">
                 <div class="mainInstruction">
-                    <img src="step4.png">
+                    <div class="stepBadge">4</div>
                     <div class="explain">
-                        View & Download your wigglegram as a GIF with the respective buttons. Frame length time can be changed here as well to your liking.
+                        For three-image uploads, select the images in order: left, middle, right. The app uses the real middle image as the middle frame.
+                    </div>
+                </div>
+            </div>
+            <div class="instructDivider"></div>
+            <div class="instructStep">
+                <div class="mainInstruction">
+                    <div class="stepBadge">5</div>
+                    <div class="explain">
+                        After uploading, drag the adjustment sliders until the focal point is as dark as possible. Then choose frame length and create your GIF.
+                    </div>
+                </div>
+            </div>
+            <div class="instructDivider"></div>
+            <div class="instructStep">
+                <div class="mainInstruction">
+                    <div class="stepBadge">6</div>
+                    <div class="explain">
+                        View and download your wigglegram as a GIF. You can also go back to readjust alignment before downloading.
                     </div>
                 </div>
             </div>
@@ -91,14 +111,13 @@
 
 <!-- IMAGE UPLOAD BUTTON -->
 <div id="initialModal">
-    <!--            major.minor.patch -->
-    <div id="versionNum">v1.9.0</div><!-- major: compatibility | minor: git push | minor: change not pushed to git -->
+
     <div class="mainPopup">
         <div class="mainText">
-            3DS Wigglegram Maker from .MPO<br>
+            Wigglegram Generator (3DS Compatible)<br>
 
             <div class="subText">
-                Upload an <b>.mpo</b> image taken from a 3DS (or other stereoscopic device) and magically create a Wigglegram GIF!<br><br>
+                Upload an <b>.mpo</b> image taken from a 3DS, or select two/three matching <b>.jpg/.png</b> images, and magically create a full-resolution Wigglegram GIF!<br><br>
                 <span style="opacity: 50%;"><i>*All data is processed locally and is not sent/saved online.</i></span>
             </div>
 
@@ -107,11 +126,11 @@
             <button id="upload-mpo-btn" type="button" class="main-btn" onclick="triggerFileUpload()">
                 <div class="main-btn-pattern"></div>
                 <div class="main-btn-fade"></div>
-                <span class="main-btn-text inter-font" style="text-transform: uppercase;">Upload .MPO File</span>
+                <span class="main-btn-text inter-font" style="text-transform: uppercase;">Upload Image File(s)</span>
             </button>
 
             <div class="buttonsRow2">
-                <button type="button" class="main-btn" onclick="window.open('https://github.com/ssambender/3ds-mpo-gif');">
+                <button type="button" class="main-btn" onclick="window.open('https://github.com/lsblackburn/wigglegram_maker');">
                     <div class="main-btn-pattern"></div>
                     <div class="main-btn-fade"></div>
                     <span class="main-btn-text inter-font">View GitHub</span>
@@ -126,12 +145,12 @@
         </div>
     </div>
 </div>
-<input id="imageUpload" type="file" accept=".mpo" onchange='loadImg(event)' style="display: none;">
+<input id="imageUpload" type="file" accept=".mpo,.jpg,.jpeg,.png,image/jpeg,image/png" multiple onchange='loadImg(event)' style="display: none;">
 
 <!-- SPLIT L/R IMAGES (HIDDEN) -->
 <div style="display:none;">
-    <canvas id="canvas_left" width="640px" height="480px" style="border: solid 2px blue;"></canvas>
-    <canvas id="canvas_right" width="640px" height="480px" style="border: solid 2px red;"></canvas>
+    <canvas id="canvas_left" style="border: solid 2px blue;"></canvas>
+    <canvas id="canvas_right" style="border: solid 2px red;"></canvas>
 </div>
 
 <!-- GIF CREATE/VIEW SCREEN -->
@@ -139,8 +158,8 @@
     <div id="secondScreenModal">
         <!-- ADJUSTMENT SLIDER -->
         <div id="differenceLabel">
-            Adjust the slider below so that main subject is the most black it can be.
-            <span style="opacity: 50%; font-size: 1rem;"><i>Use the scrollwheel over the slider to fine-tune adjustment.</i></span>
+            <span>Align the stereo pair</span>
+            <span>Adjust until the subject is darkest. Use the scroll wheel over a slider for fine control.</span>
         </div>
         <div id="differenceControl">
             <input id="adjustOverlap" type="range" min="-320" max="320" style="width: 500px">
@@ -149,14 +168,24 @@
         <!-- ADJUSTMENT OVERLAY IMAGES -->
         <div id="differenceContainer">
             <input id="adjustOverlapVert" type="range" min="-20" max="20" orient="vertical">
-            <span id="adjustAmountLabelVert" style="position: absolute;">0px</span>
-            <canvas id="canvas_overlap" width="640px" height="480px"></canvas>
-            <canvas id="canvas_bottom" width="640px" height="480px"></canvas>
+            <span id="adjustAmountLabelVert">0px</span>
+            <div id="previewCanvasStack">
+                <canvas id="canvas_overlap"></canvas>
+                <canvas id="canvas_bottom"></canvas>
+            </div>
         </div>
-        <!-- FRAME LENGTH -->
-        <div id="frameLengthContainer">
-            <span style="margin-right: 4px">Optional: Change frame length ms:</span>
-            <input id="frameSpeed" type="number" value="100" min="50" max="250" step="10">
+        <!-- GIF SETTINGS -->
+        <div id="gifSettingsContainer">
+            <label class="settingField" for="frameSpeed">
+                <span>Frame length</span>
+                <input id="frameSpeed" type="number" value="100" min="50" max="250" step="10">
+                <span>ms</span>
+            </label>
+            <label class="settingToggle" for="includeInterpolationFrame">
+                <input id="includeInterpolationFrame" type="checkbox" checked>
+                <span class="toggleMark"></span>
+                <span>Interpolation frame</span>
+            </label>
         </div>
 
         <!-- CREATE GIF BUTTON -->
@@ -174,13 +203,13 @@
             <img id="finalGif" class="shadow">
         </div>
 
-        <div style="display: flex">
-            <button type="button" class="main-btn" onclick="downloadGif()" style="width: 11rem; margin: 0 12px 36px 12px;">
+        <div class="resultActions">
+            <button type="button" class="main-btn" onclick="downloadGif()">
                 <div class="main-btn-pattern"></div>
                 <div class="main-btn-fade"></div>
                 <span class="main-btn-text inter-font">DOWNLOAD GIF</span>
             </button>
-            <button type="button" class="main-btn" onclick="download3dAnaglyph()" style="width: 10.5rem; margin: 0 12px 36px 12px;">
+            <button type="button" class="main-btn" onclick="download3dAnaglyph()">
                 <div class="main-btn-pattern"></div>
                 <div class="main-btn-fade"></div>
                 <span class="main-btn-text inter-font">3D ANAGLYPH</span>
@@ -199,31 +228,12 @@
 
 <!-- CROPPED FRAMES (HIDDEN) -->
 <div style="display: none; z-index: -1; position: absolute; flex-direction: column">
-    <canvas id="canvas_cropped1" width="960px" height="480px" style="border: solid 2px black;"></canvas><br>
-    <canvas id="canvas_cropped2" width="960px" height="480px" style="border: solid 2px black;"></canvas><br>
-    <canvas id="canvas_cropped3" width="960px" height="480px" style="border: solid 2px black;"></canvas><br>
+    <canvas id="canvas_cropped1" style="border: solid 2px black;"></canvas><br>
+    <canvas id="canvas_cropped2" style="border: solid 2px black;"></canvas><br>
+    <canvas id="canvas_cropped3" style="border: solid 2px black;"></canvas><br>
 </div>
 
-<div id="customMouse"><img src="hand-cursor.png"></div>
-
 <script>
-    // Custom image mouse cursor
-    const customMouse = document.getElementById('customMouse');
-    const moveCursor = (e)=> {
-        const mouseY = e.clientY;
-        const mouseX = e.clientX;
-        customMouse.style.transform = `translate3d(${mouseX - 8}px, ${mouseY - 2}px, 0)`;
-    }
-    window.addEventListener('mousemove', moveCursor)
-    // Hide mouse cursor (move it offscreen) when it leaves window
-    document.body.addEventListener("mouseleave", (event) => {
-        customMouse.style.transform = `translate3d(-100px, -100px, 0)`;
-    });
-    // Hide custom mouse if touchscreen
-    if(window.matchMedia("(any-hover: none)").matches) {
-        customMouse.style.visibility = "hidden";
-    }
-
     // Prevents page reload confirmation before any progress
     window.onbeforeunload = null;
 
@@ -235,13 +245,16 @@
     // Forked from k-hatano - https://github.com/k-hatano/stereo_viewer_js
     var canvasWidth = 640;
     var canvasHeight = 480;
+    let previewScale = 1;
 
     let imageName = "";
     let overlayOffset = 0;
     let verticalOffset = 0;
     let frameSpeed = 100;
+    let includeInterpolationFrame = true;
 
     var leftImage = new Image();
+    var middleImage = null;
     var rightImage = new Image();
 
     const colors = ['#f34132', '#ffac00', '#5394ce', '#a66fef', '#6bce71'];
@@ -253,40 +266,176 @@
     };
 
     // Function for when a valid image file is uploaded
-    function loadImg(event) {
-        var file = event.target.files[0];
-        var reader = new FileReader();
-        reader.readAsBinaryString(file);
+    async function loadImg(event) {
+        const files = Array.from(event.target.files);
+        if(files.length === 0) {
+            return;
+        }
 
-        reader.onload = function() {
-            imageName = file.name.toString().split('.')[0];
-            let result = splitImageToLeftRight(reader.result);
+        document.getElementById('loading').style.display = 'flex';
+        document.getElementById('initialModal').style.display = 'none';
 
-            // todo - wait for the result before setting the src (below) instead of waiting a length/time
+        try {
+            const result = await loadStereoImage(files);
+            imageName = result.name;
 
-            leftImage.src = result[1];  // should be 1
-            rightImage.src = result[0];  // should be 0
+            leftImage.src = result.left;
+            middleImage = result.middle ? new Image() : null;
+            if(middleImage) {
+                middleImage.src = result.middle;
+            }
+            rightImage.src = result.right;
 
+            const imagesToLoad = middleImage ? [leftImage, middleImage, rightImage] : [leftImage, rightImage];
+            await Promise.all(imagesToLoad.map(imageLoaded));
 
-            document.getElementById('loading').style.display = 'flex';  // display loading
-            setTimeout(function(){
-                drawCanvas();
+            canvasWidth = Math.min(...imagesToLoad.map(function(image) { return image.naturalWidth; }));
+            canvasHeight = Math.min(...imagesToLoad.map(function(image) { return image.naturalHeight; }));
+            configureCanvases();
+            drawCanvas();
+            resetAdjustments();
+            updateFrameSettingsForImageSet();
 
-                document.getElementById('loading').style.display = 'none';  // hide loading
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('secondScreenContainer').style.display = 'flex';
+            document.getElementById('background2').style.display = "flex";
 
-                document.getElementById('secondScreenContainer').style.display = 'flex';
-                document.getElementById('background2').style.display = "flex";
-                //document.getElementById('differenceControl').style.display = 'flex';
-                //document.getElementById('differenceContainer').style.display = 'flex';
-                //document.getElementById('frameLengthContainer').style.display = 'flex';
-                //document.getElementById('differenceLabel').style.display = 'flex';
-                //document.getElementById('createGifContainer').style.display = 'flex';
+            window.onbeforeunload = function(e) {return 'Reload page? Progress will not be saved';};  // page reload confirmation
+        }
+        catch(error) {
+            console.error(error);
+            alert(error.message || 'Could not load that image.');
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('initialModal').style.display = 'flex';
+        }
+    }
 
-                window.onbeforeunload = function(e) {return 'Reload page? Progress will not be saved';};  // page reload confirmation
-            }, 654);
+    function imageLoaded(image) {
+        if(image.complete && image.naturalWidth > 0) {
+            return Promise.resolve();
+        }
+        return new Promise(function(resolve, reject) {
+            image.onload = resolve;
+            image.onerror = function() {
+                reject(new Error('Could not decode one of the stereo images.'));
+            };
+        });
+    }
 
-            document.getElementById('initialModal').style.display = 'none';
-        };
+    async function loadStereoImage(files) {
+        const file = files[0];
+        const extension = file.name.split('.').pop().toLowerCase();
+        if(extension === 'mpo') {
+            if(files.length !== 1) {
+                throw new Error('Please select only one MPO file.');
+            }
+            const buffer = await file.arrayBuffer();
+            const result = splitMpoToLeftRight(buffer);
+            if(result.length < 2) {
+                throw new Error('This MPO file does not contain two JPEG images.');
+            }
+            return {
+                left: result[1],
+                right: result[0],
+                name: file.name.toString().replace(/\.[^/.]+$/, '')
+            };
+        }
+
+        if(files.every(isRasterImageFile)) {
+            if(files.length !== 2 && files.length !== 3) {
+                throw new Error('Please select two or three JPG/PNG images: left image first, middle image second if included, right image last.');
+            }
+            return {
+                left: await fileToDataUrl(files[0]),
+                middle: files.length === 3 ? await fileToDataUrl(files[1]) : null,
+                right: await fileToDataUrl(files[files.length - 1]),
+                name: files[0].name.toString().replace(/\.[^/.]+$/, '')
+            };
+        }
+
+        throw new Error('Please upload one MPO file, or two/three JPG/PNG files.');
+    }
+
+    function isRasterImageFile(file) {
+        const extension = file.name.split('.').pop().toLowerCase();
+        return ['jpg', 'jpeg', 'png'].includes(extension) || ['image/jpeg', 'image/png'].includes(file.type);
+    }
+
+    function fileToDataUrl(file) {
+        return new Promise(function(resolve, reject) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                resolve(reader.result);
+            };
+            reader.onerror = function() {
+                reject(new Error('Could not read one of the selected JPG/PNG images.'));
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function configureCanvases() {
+        ['canvas_left', 'canvas_right', 'canvas_bottom', 'canvas_overlap'].forEach(function(id) {
+            const canvas = document.getElementById(id);
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+        });
+
+        const maxPreviewWidth = Math.min(window.innerWidth * 0.72, 900);
+        const maxPreviewHeight = Math.min(window.innerHeight * 0.48, 540);
+        previewScale = Math.min(1, maxPreviewWidth / canvasWidth, maxPreviewHeight / canvasHeight);
+        const previewWidth = Math.max(1, Math.round(canvasWidth * previewScale));
+        const previewHeight = Math.max(1, Math.round(canvasHeight * previewScale));
+
+        ['canvas_bottom', 'canvas_overlap'].forEach(function(id) {
+            const canvas = document.getElementById(id);
+            canvas.style.width = previewWidth + 'px';
+            canvas.style.height = previewHeight + 'px';
+        });
+
+        const previewCanvasStack = document.getElementById('previewCanvasStack');
+        previewCanvasStack.style.width = previewWidth + 'px';
+        previewCanvasStack.style.height = previewHeight + 'px';
+
+        const horizontalSlider = document.getElementById('adjustOverlap');
+        const maxHorizontalAdjust = Math.max(1, Math.floor(canvasWidth / 2));
+        horizontalSlider.min = -maxHorizontalAdjust;
+        horizontalSlider.max = maxHorizontalAdjust;
+        horizontalSlider.value = 0;
+        horizontalSlider.style.width = Math.min(500, previewWidth) + 'px';
+
+        const verticalSlider = document.getElementById('adjustOverlapVert');
+        const maxVerticalAdjust = Math.max(1, Math.floor(canvasHeight / 4));
+        verticalSlider.min = -maxVerticalAdjust;
+        verticalSlider.max = maxVerticalAdjust;
+        verticalSlider.value = 0;
+    }
+
+    function resetAdjustments() {
+        overlayOffset = 0;
+        verticalOffset = 0;
+        adjustChanged();
+        adjustChangedVert();
+    }
+
+    function updateFrameSettingsForImageSet() {
+        const toggle = document.getElementById('includeInterpolationFrame');
+        const label = toggle.closest('.settingToggle');
+        const labelText = label.querySelector('span:last-child');
+
+        if(middleImage) {
+            toggle.disabled = true;
+            toggle.checked = true;
+            includeInterpolationFrame = true;
+            label.classList.add('is-disabled');
+            labelText.innerText = 'Middle frame included';
+        }
+        else {
+            toggle.disabled = false;
+            label.classList.remove('is-disabled');
+            labelText.innerText = 'Interpolation frame';
+            includeInterpolationFrame = toggle.checked;
+        }
     }
 
     // Draw 2d images to canvas
@@ -309,21 +458,22 @@
     }
 
     // Takes input .MPO image and converts it to 2 separate images (L/R)
-    function splitImageToLeftRight(source) {
+    function splitMpoToLeftRight(buffer) {
+        const source = new Uint8Array(buffer);
         var indexPair = [];
         var depth = 0;
         var startIndex = 0;
 
         for (var i = 0; i < source.length; i++) {
 
-            if (source.charCodeAt(i) === 0xff && source.charCodeAt(i + 1) === 0xd8) {
+            if (source[i] === 0xff && source[i + 1] === 0xd8) {
                 if (depth === 0) {
                     startIndex = i;
                 }
                 depth++;
                 i++;
             }
-            if (source.charCodeAt(i) === 0xff && source.charCodeAt(i + 1) === 0xd9) {
+            if (source[i] === 0xff && source[i + 1] === 0xd9) {
                 depth--;
                 if (depth === 0) {
                     indexPair.push({start:startIndex, end:i + 2});
@@ -334,19 +484,28 @@
 
         var result = [];
         for (var j = 0; j < indexPair.length; j++) {
-            var image = source.substring(indexPair[j].start, indexPair[j].end);
-            var imageUrl = 'data:image/jpeg;base64,' + btoa(image);
+            var image = source.slice(indexPair[j].start, indexPair[j].end);
+            var imageUrl = 'data:image/jpeg;base64,' + bytesToBase64(image);
 
             result.push(imageUrl);
         }
         return result;
     }
 
+    function bytesToBase64(bytes) {
+        let binary = '';
+        const chunkSize = 0x8000;
+        for(let i = 0; i < bytes.length; i += chunkSize) {
+            const chunk = bytes.subarray(i, i + chunkSize);
+            binary += String.fromCharCode.apply(null, chunk);
+        }
+        return btoa(binary);
+    }
     // Range slider to adjust overlay
     function adjustChanged() {
-        document.getElementById("canvas_overlap").style.marginLeft = document.getElementById('adjustOverlap').value.toString() + "px";
+        overlayOffset = parseInt(document.getElementById('adjustOverlap').value, 10) || 0;
+        document.getElementById("canvas_overlap").style.transform = `translate(${overlayOffset * previewScale}px, ${verticalOffset * -previewScale}px)`;
         document.getElementById('adjustAmountLabel').innerText = document.getElementById('adjustOverlap').value.toString() + "px";
-        overlayOffset = document.getElementById('adjustOverlap').value / 2;
     }
     document.getElementById('adjustOverlap').addEventListener("input", function() {
         adjustChanged();
@@ -363,9 +522,9 @@
     })
 
     function adjustChangedVert() {
-        document.getElementById("canvas_overlap").style.marginTop = (document.getElementById('adjustOverlapVert').value * -1).toString() + "px";
+        verticalOffset = parseInt(document.getElementById('adjustOverlapVert').value, 10) || 0;
+        document.getElementById("canvas_overlap").style.transform = `translate(${overlayOffset * previewScale}px, ${verticalOffset * -previewScale}px)`;
         document.getElementById('adjustAmountLabelVert').innerText = document.getElementById('adjustOverlapVert').value.toString() + "px";
-        verticalOffset = document.getElementById('adjustOverlapVert').value;
     }
     document.getElementById('adjustOverlapVert').addEventListener("input", function() {
         adjustChangedVert();
@@ -386,109 +545,79 @@
     document.getElementById('frameSpeed').addEventListener("input", function() {
         frameSpeed = document.getElementById('frameSpeed').value;
     }, false);
+    document.getElementById('includeInterpolationFrame').addEventListener("change", function(event) {
+        includeInterpolationFrame = event.target.checked;
+    }, false);
 
     // Create animation frames from base and overlay
     function createFrames() {
         var frame_crop1 = document.getElementById('canvas_cropped1');
         var frame_crop2 = document.getElementById('canvas_cropped2');
         var frame_crop3 = document.getElementById('canvas_cropped3');
-        let crop_width;
-        let crop_height = 480 - Math.abs(verticalOffset);  // height
-        let overlapRight = true;
-        let moveUp = true;  // height
-        if(overlayOffset > 0){
-            crop_width = (160 + canvasWidth) - (160 + parseInt(overlayOffset));
+        let crop_width = canvasWidth - Math.abs(overlayOffset);
+        let crop_height = canvasHeight - Math.abs(verticalOffset);
+
+        if(crop_width < 1 || crop_height < 1) {
+            throw new Error('The adjustment is larger than the usable image area.');
         }
-        else {
-            crop_width = (160 + canvasWidth + parseInt(overlayOffset)) - 160;
-            overlapRight = false;
-        }
-        if(verticalOffset < 0) {
-            moveUp = false;
-        }
+
         frame_crop1.width = crop_width;
-        frame_crop1.height = crop_height;  // height
+        frame_crop1.height = crop_height;
         frame_crop2.width = crop_width;
-        frame_crop2.height = crop_height;  // height
+        frame_crop2.height = crop_height;
         frame_crop3.width = crop_width;
-        frame_crop3.height = crop_height;  // height
+        frame_crop3.height = crop_height;
 
-        var ctx_crop1 = frame_crop1.getContext('2d');
-        ctx_crop1.clearRect(0, 0, crop_width, crop_height);  //parseInt(overlayOffset)
-        if(overlapRight) {
-            if(moveUp) {
-                ctx_crop1.drawImage(leftImage, 0 - parseInt(overlayOffset), 0, canvasWidth, canvasHeight);  // no change
-            }
-            else {
-                ctx_crop1.drawImage(leftImage, 0 - parseInt(overlayOffset), Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight);  // changed
-            }
-        }
-        else {
-            if(moveUp) {
-                ctx_crop1.drawImage(leftImage, 0, 0, canvasWidth, canvasHeight);  // no change
-            }
-            else {
-                ctx_crop1.drawImage(leftImage, 0, Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight);  // changed
-            }
-        }
+        const rightX = overlayOffset;
+        const rightY = verticalOffset * -1;
+        const cropStartX = Math.max(0, rightX);
+        const cropStartY = Math.max(0, rightY);
+        const leftDrawX = cropStartX * -1;
+        const leftDrawY = cropStartY * -1;
+        const rightDrawX = rightX - cropStartX;
+        const rightDrawY = rightY - cropStartY;
+        const middleDrawX = (rightX / 2) - cropStartX;
+        const middleDrawY = (rightY / 2) - cropStartY;
 
-        var ctx_crop2 = frame_crop2.getContext('2d');
-        ctx_crop2.clearRect(0, 0, crop_width, canvasHeight);
-        ctx_crop2.globalAlpha = 1;
-        if(overlapRight) {
-            if(moveUp) {
-                ctx_crop2.drawImage(leftImage, 0 - parseInt(overlayOffset), 0, canvasWidth, canvasHeight); //no change
-                ctx_crop2.globalAlpha = 0.5;
-                ctx_crop2.drawImage(rightImage, 0, Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight); //changed
+        function drawAlignedFrame(ctx, leftAlpha, rightAlpha) {
+            ctx.clearRect(0, 0, crop_width, crop_height);
+            ctx.globalAlpha = leftAlpha;
+            if(leftAlpha > 0) {
+                ctx.drawImage(leftImage, leftDrawX, leftDrawY, canvasWidth, canvasHeight);
             }
-            else {
-                ctx_crop2.drawImage(leftImage, 0 - parseInt(overlayOffset), Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight); //changed
-                ctx_crop2.globalAlpha = 0.5;
-                ctx_crop2.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight); //no change
+            ctx.globalAlpha = rightAlpha;
+            if(rightAlpha > 0) {
+                ctx.drawImage(rightImage, rightDrawX, rightDrawY, canvasWidth, canvasHeight);
             }
-        }
-        else {
-            if(moveUp) {
-                ctx_crop2.drawImage(leftImage, 0, 0, canvasWidth, canvasHeight);  //no change
-                ctx_crop2.globalAlpha = 0.5;
-                ctx_crop2.drawImage(rightImage, parseInt(overlayOffset), Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight);  //changed
-            }
-            else {
-                ctx_crop2.drawImage(leftImage, 0, Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight);  //changed
-                ctx_crop2.globalAlpha = 0.5;
-                ctx_crop2.drawImage(rightImage, parseInt(overlayOffset), 0, canvasWidth, canvasHeight);  //no change
-            }
+            ctx.globalAlpha = 1;
         }
 
-        var ctx_crop3 = frame_crop3.getContext('2d');
-        ctx_crop3.clearRect(0, 0, crop_width, canvasHeight);
-        if(overlapRight) {
-            if(moveUp) {
-                ctx_crop3.drawImage(rightImage, 0, Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight);
-            }
-            else {
-                ctx_crop3.drawImage(rightImage, 0, 0, canvasWidth, canvasHeight); // no change
-            }
+        const ctx_crop1 = frame_crop1.getContext('2d');
+        const ctx_crop2 = frame_crop2.getContext('2d');
+        const ctx_crop3 = frame_crop3.getContext('2d');
+
+        drawAlignedFrame(ctx_crop1, 1, 0);
+        if(middleImage) {
+            ctx_crop2.clearRect(0, 0, crop_width, crop_height);
+            ctx_crop2.drawImage(middleImage, middleDrawX, middleDrawY, canvasWidth, canvasHeight);
         }
         else {
-            if(moveUp) {
-                ctx_crop3.drawImage(rightImage, parseInt(overlayOffset), Math.abs(verticalOffset) * -1, canvasWidth, canvasHeight);
-            }
-            else {
-                ctx_crop3.drawImage(rightImage, parseInt(overlayOffset), 0, canvasWidth, canvasHeight); // no change
-            }
+            drawAlignedFrame(ctx_crop2, 1, 0.5);
         }
-        console.log({moveUp});
-        console.log({overlapRight});
+        drawAlignedFrame(ctx_crop3, 0, 1);
 
         var encoder = new GIFEncoder();
         encoder.setRepeat(0);
         encoder.setDelay(parseInt(frameSpeed));
         encoder.start();
         encoder.addFrame(ctx_crop1);
-        encoder.addFrame(ctx_crop2);
+        if(includeInterpolationFrame) {
+            encoder.addFrame(ctx_crop2);
+        }
         encoder.addFrame(ctx_crop3);
-        encoder.addFrame(ctx_crop2);
+        if(includeInterpolationFrame) {
+            encoder.addFrame(ctx_crop2);
+        }
         encoder.finish();
 
         //encoder.download(imageName + "_wigglegram_" + frameSpeed.toString() + "ms.gif");

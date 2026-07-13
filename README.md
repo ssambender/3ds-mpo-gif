@@ -4,7 +4,7 @@
 
 <h1 align="center">3DS Wigglegram</h1>
 
-<h3 align="center">Create and view wigglegram gifs from .mpo files. Designed to work with files from the Nintendo 3DS.</h3>
+<h3 align="center">Create and view wigglegram gifs from .mpo files or matching JPG/PNG image sets. Designed to work with files from the Nintendo 3DS, with 3-image support for Nimslo-style uploads.</h3>
 
 <div align="center">
     <img src="sam_wigglegram_100.gif" height="300px"> <img src="DQ_wigglegram_100.gif" height="300px">
